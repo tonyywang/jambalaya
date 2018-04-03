@@ -1,0 +1,4 @@
+0. python 3.6
+1. spacy
+2. rake-nltk
+3. nltk
