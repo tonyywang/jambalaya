@@ -12,28 +12,6 @@ def read_data(file):
     return text
 
 
-def cancate(input1, input2, input3, input4, output):
-    list = [input1, input2, input3, input4]
-    output_text = ''
-    for file in list:
-        with open(file) as f:
-            text = str.lower(f.read().strip())
-            output_text += text + ' '
-    with open(output, 'w') as f:
-        f.write(output_text)
-
-
-lines = []
-def split(input, output1, output2):
-    with open(input) as f:
-        lines = f.readlines()
-
-    with open(output1, 'w') as f:
-        f.writelines(lines[0:25])
-
-    with open(output2, 'w') as f:
-        f.writelines(lines[25:50])
-
 
 def vocaulary_generate(text):
     vocaulary_count = {}
