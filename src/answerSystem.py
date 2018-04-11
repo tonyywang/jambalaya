@@ -44,13 +44,6 @@ def detect_type(sentence):
 
 	return 'Unknown answer type'
 
-sentence = 'Who is the presentend?'
-t = detect_type(sentence)
-print(t)
-print(isinstance(t, WHType))
-
-
-
 
 
 # Generate keywords for quetion
@@ -69,8 +62,6 @@ def find_relevant_sentences(keywords, article):
 		doc = nlp(sentence)
 		for token in doc:
 			tokens.add(str(token))
-			print(token)
-			print(tokens)
 		matched_words = set(filter(set(keywords).__contains__, tokens))
 		article_dict[sentence] = len(matched_words)
 
@@ -122,8 +113,16 @@ def answer(question, article):
 
 	relevant_sents = find_relevant_sentences(keywords, article)
 
+	answers = []
 	if isinstance(question_type, WHType):
-		answerWH(question_type, relevant_sents)
+		answers = answerWH(question_type, relevant_sents)
 	elif isinstance(question_type, BINType):
 		answerBIN(relevant_sents)
+	return answers
 
+if __name__ == "__main__":
+	question = "Who is the presentend?"
+	article = ["Donald Trump is the presentend."]
+
+	print(question)
+	print(answer(question, article))
