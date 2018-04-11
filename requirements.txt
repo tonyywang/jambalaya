@@ -7,3 +7,5 @@
 4b. Maven 3.3.9
 4c. Docker version 17.03+
 4d. docker-compose version 1.12+
+5. Cort
+6. neuralcoref
