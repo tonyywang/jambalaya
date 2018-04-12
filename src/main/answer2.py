@@ -93,8 +93,23 @@ def extract_answer_by_NER(relevant_sents, ner_list):
 				answers.append(ent.text)
 	return answers
 
+def extract_dobj(relevant_sents):
+	# He has finished his homework.
+	answers = []
+	for sent in relevant_sents:
+		nlp = spacy.load('en')
+		doc = nlp(sent)
+		for doc_sen in doc.sents:
+			for chunk in doc_sen.noun_chunks:
+				if chunk.root.dep_ == 'dobj':
+					answers.append(chunk.text)
+	return answers
 
 def answerWH(question_type, relevant_sents):
+
+	if question_type == WHType.WHAT:
+		return extract_dobj(relevant_sents)
+
 	ner_list = []
 	if question_type in [WHType.WHO, WHType.WHOSE, WHType.WHOM]:
 		ner_list = ["PERSON"]
@@ -104,8 +119,7 @@ def answerWH(question_type, relevant_sents):
 		ner_list = ["DATE", "TIME"]
 	elif question_type == WHType.WHERE:
 		ner_list = ["ORG", "GPE", "LOC"]
-	elif question_type == WHType.WHAT:
-		ner_list = ["ORG", "PRODUCT"]
+
 
 	# answers = []
 	# for sent in relevant_sents:
@@ -187,9 +201,17 @@ def main(article, question):
 if __name__ == "__main__":
 	# question = "Who is the presentend?"
 	# article = ["Donald Trump is the presentend."]
-
+	#
 	# print(question)
-	# print(answer(question, article))
+	# print(answer(article, question))
+
+	#
+	# question = "What has he finished?"
+	# article = ["He has finished his homework."]
+	#
+	# print(question)
+	# print(answer(article, question))
+
 	article = sys.argv[1]
 	question = sys.argv[2]
 	main(article, question)
