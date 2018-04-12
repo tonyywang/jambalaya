@@ -283,7 +283,7 @@ if __name__ == "__main__":
 
 	text_file = sys.argv[1]
 	num_questions = int(sys.argv[2])
-	out_file = sys.argv[3]
+	out_file = 'questions.txt'
 	sentences = read_data(text_file)
 	question_list = []
 	bin_list = []
