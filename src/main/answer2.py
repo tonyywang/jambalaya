@@ -106,9 +106,10 @@ def extract_dobj(relevant_sents):
 	return answers
 
 def answerWH(question_type, relevant_sents):
-
+	answers = []
 	if question_type == WHType.WHAT:
-		return extract_dobj(relevant_sents)
+		answers = extract_dobj(relevant_sents)
+		return answers
 
 	ner_list = []
 	if question_type in [WHType.WHO, WHType.WHOSE, WHType.WHOM]:
@@ -121,7 +122,7 @@ def answerWH(question_type, relevant_sents):
 		ner_list = ["ORG", "GPE", "LOC"]
 
 
-	# answers = []
+
 	# for sent in relevant_sents:
 	# 	answer = extract_answer_by_NER(sent, ner_list)
 	# 	answers.append(answer)
@@ -172,7 +173,7 @@ def answerBIN(question_type, relevant_sents):
 	return answer
 
 #'Who is the presentend?'
-def answer(article, question):
+def answer_question(article, question):
 	keywords = keywords_generation(question)
 	question_type = detect_type(question)
 
@@ -192,7 +193,9 @@ def main(article, question):
 	answer_list = []
 	out_file = 'answers.txt'
 	for q in question:
-		answers = answer(article, q)
+		answer = answer_question(article, q)
+		if len(answer) == 0:
+			answer = ["Woops, no answer."]
 		print(answers)
 		answer_list.append(answers)
 	# write_file(out_file, answer_list)
