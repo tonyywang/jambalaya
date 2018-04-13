@@ -192,7 +192,8 @@ def answer_question(article, question):
 def write_file(filename, sent_list):
 	with open(filename, 'w') as f:
 		for sent in sent_list:
-			f.writelines(sent)
+			f.write(sent[0] + '\n')
+			# f.write('\n'.join(sent)+'\r\n')
 
 
 def main(input_file_article, question):
