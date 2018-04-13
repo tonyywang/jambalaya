@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Decide the named entity type(person, place) of the answer
+
 
 from rake_nltk import Rake
 import spacy
@@ -133,8 +135,8 @@ def answerWH(question_type, relevant_sents):
 def extract_answer_by_not(sent, not_list):
 	for w in sent:
 		if w in not_list:
-			return "No"
-	return "Yes"
+			return ["No"]
+	return ["Yes"]
 
 
 def answerBIN(question_type, relevant_sents):
@@ -187,6 +189,11 @@ def answer_question(article, question):
 	return answers
 
 
+def write_file(filename, sent_list):
+	with open(filename, 'w') as f:
+		for sent in sent_list:
+			f.writelines(sent)
+
 
 def main(article, question):
 	question = read_data(question)
@@ -196,25 +203,12 @@ def main(article, question):
 		answer = answer_question(article, q)
 		if len(answer) == 0:
 			answer = ["Woops, no answer."]
-		print(answers)
-		answer_list.append(answers)
-	# write_file(out_file, answer_list)
+		print(answer)
+		answer_list.append(answer)
+	write_file(out_file, answer_list)
 
 
 if __name__ == "__main__":
-	# question = "Who is the presentend?"
-	# article = ["Donald Trump is the presentend."]
-	#
-	# print(question)
-	# print(answer(article, question))
-
-	#
-	# question = "What has he finished?"
-	# article = ["He has finished his homework."]
-	#
-	# print(question)
-	# print(answer(article, question))
-
 	article = sys.argv[1]
 	question = sys.argv[2]
 	main(article, question)

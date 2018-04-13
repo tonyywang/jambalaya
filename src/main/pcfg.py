@@ -1,5 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python3cp
 # -*- coding: utf-8 -*-
+
 
 import sys
 import operator

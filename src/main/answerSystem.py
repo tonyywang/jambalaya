@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Decide the named entity type(person, place) of the answer
+
 
 from rake_nltk import Rake
 import spacy
