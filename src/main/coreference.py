@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-
-
 import requests
 import sys
 import time
@@ -31,27 +28,33 @@ def preprocessing(file):
 
     return data
 
-def post(headers, data):
-    article = []
+def concat(article):
     for section in data:
-        if len(section) > 200:
-            r = requests.post('http://localhost:5128/resolve/text', headers=headers, json={"text":section})
-            # print(r.text)
-            time.sleep(0.5)
-            json_text = r.json()['text']
-            article.append(json_text)
-        else:
-            article.append(section)
+        if len(section) > 100:
+            paragraphs_only = "\r\n".join([section for section in article])
+
+    return paragraphs_only
+
+def post(headers, paragraphs_only):
+    r = requests.post('http://localhost:8080/coreference/text', headers=headers, json={"text":section})
+    # print(r.text)
+    time.sleep(0.5)
+    article = r.json()['substitutedText']
 
     return article
-
-def concat(article):
-    replace_article = "\n".join([section for section in article])
-    return replace_article
 
 if __name__ == "__main__":
     file = sys.argv[1]
     data = preprocessing(file)
-    article = post(headers, data)
-    replace_article = concat(article)
-    print(replace_article)
+    paragraphs_only = concat(data)
+    article = post(headers, paragraphs_only)
+    print(article)
+
+def coreference(file, output):
+    data = preprocessing(file)
+    paragraphs_only = concat(data)
+    article = post(headers, paragraphs_only)
+    print(article)
+    with io.open(output, 'w+', encoding='utf-8') as wf:
+        wf.write(unicode(article))
+
