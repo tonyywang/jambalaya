@@ -5,8 +5,8 @@ import pcfg
 
 
 
-def sort_by_score(questions_list, num_questions):
-	train = './a1.txt'
+def sort_by_score(questions_list, num_questions, train):
+	# train = './a1.txt'
 	list = []
 	for q in questions_list:
 		if len(q) > 3:
@@ -28,12 +28,12 @@ def q_score(q):
 	return total_score
 
 
-def get_best_n(bin_list, wh_list, num_questions):
+def get_best_n(bin_list, wh_list, num_questions, text_file):
 	best_list = []
 	bin_num = num_questions//3
 	wh_num = num_questions - bin_num
-	bin_list = sort_by_score(bin_list, bin_num)
-	wh_list = sort_by_score(wh_list, wh_num)
+	bin_list = sort_by_score(bin_list, bin_num, text_file)
+	wh_list = sort_by_score(wh_list, wh_num, text_file)
 	for q in bin_list:
 		best_list.append(q)
 	for q in wh_list:

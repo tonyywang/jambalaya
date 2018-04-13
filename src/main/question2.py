@@ -304,7 +304,7 @@ if __name__ == "__main__":
 				wh_list.append(q)
 	print(len(question_list))
 	# sort_list = sort_by_score(question_list, num_questions)
-	sort_list = rank.get_best_n(bin_list, wh_list, num_questions)
+	sort_list = rank.get_best_n(bin_list, wh_list, num_questions, text_file)
 	for s in sort_list:
 		print(s)
 	write_file(out_file, sort_list)
