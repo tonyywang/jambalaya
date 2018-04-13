@@ -9,7 +9,7 @@ import collections
 from enum import Enum
 import sys
 import io
-
+import coreference
 
 TOP_K = 10
 class WHType(Enum):
@@ -195,10 +195,15 @@ def write_file(filename, sent_list):
 			f.writelines(sent)
 
 
-def main(article, question):
+def main(input_file_article, question):
+	replaced_file = input_file_article + '.replaced'
+	coreference.coreference(input_file_article, replaced_file)
 	question = read_data(question)
+	article = read_data(replaced_file)
+
 	answer_list = []
-	out_file = 'answers.txt'
+	out_file = '../resources/answers.txt'
+
 	for q in question:
 		answer = answer_question(article, q)
 		if len(answer) == 0:

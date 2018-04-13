@@ -1,6 +1,7 @@
 import requests
 import sys
 import time
+import io
 
 # curl -X POST \
 #  -H "Content-Type: application/json" \
@@ -22,26 +23,36 @@ def preprocessing(file):
         #     list.append(line)
         text = a.read()
 
-    data = text.split('\n\n\n')
-
+    data = text.split('\n')
+    # print(data)
     # test = "\n".join(text.split('\n\n\n')[1:])
 
     return data
 
-def concat(article):
+def concat(data):
+    paragraphs_only = []
     for section in data:
         if len(section) > 100:
-            paragraphs_only = "\r\n".join([section for section in article])
-
-    return paragraphs_only
+            paragraphs_only.append(section)
+    return "\n".join(paragraphs_only)
 
 def post(headers, paragraphs_only):
-    r = requests.post('http://localhost:8080/coreference/text', headers=headers, json={"text":section})
+    r = requests.post('http://localhost:8080/coreference/text', headers=headers, json={"text":paragraphs_only})
     # print(r.text)
     time.sleep(0.5)
     article = r.json()['substitutedText']
 
     return article
+
+
+def coreference(file, output):
+    data = preprocessing(file)
+    paragraphs_only = concat(data)
+    article = post(headers, paragraphs_only)
+    with io.open(output, 'w+', encoding='utf-8') as wf:
+        wf.write(article)
+
+
 
 if __name__ == "__main__":
     file = sys.argv[1]
@@ -49,12 +60,3 @@ if __name__ == "__main__":
     paragraphs_only = concat(data)
     article = post(headers, paragraphs_only)
     print(article)
-
-def coreference(file, output):
-    data = preprocessing(file)
-    paragraphs_only = concat(data)
-    article = post(headers, paragraphs_only)
-    print(article)
-    with io.open(output, 'w+', encoding='utf-8') as wf:
-        wf.write(unicode(article))
-

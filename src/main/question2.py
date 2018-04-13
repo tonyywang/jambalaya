@@ -6,6 +6,7 @@ import spacy
 import sys
 import io
 import rank
+import coreference
 
 beVerbs = ['am', 'is', 'are', 'was', 'were']
 # python -m spacy download en
@@ -284,8 +285,10 @@ if __name__ == "__main__":
 
 	text_file = sys.argv[1]
 	num_questions = int(sys.argv[2])
-	out_file = 'questions.txt'
-	sentences = read_data(text_file)
+	out_file = '../resources/questions.txt'
+	replaced_file = text_file + '.replaced'
+	coreference.coreference(text_file, replaced_file)
+	sentences = read_data(replaced_file)
 	question_list = []
 	bin_list = []
 	wh_list = []
