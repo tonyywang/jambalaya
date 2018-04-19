@@ -6,35 +6,15 @@
 from rake_nltk import Rake
 import spacy
 import collections
-from enum import Enum
+
 import sys
 import io
 import coreference
+from questionTypes import WHType
+from questionTypes import BINType
+from questionTypes import detect_type
 
 TOP_K = 10
-class WHType(Enum):
-	WHO = 'who'
-	WHOSE = 'whose'
-	WHOM = 'whom'
-	WHAT = 'what'
-	WHERE = 'where'
-	WHEN = 'when'
-#Binary type
-class BINType(Enum):
-	AM = 'am'
-	IS = 'is'
-	ARE = 'are'
-	WAS = 'was'
-	WERE = 'were'
-	HAD = 'had'
-	HAS = 'has'
-	HAVE = 'have'
-	DO = 'do'
-	DID = 'did'
-	WILL = 'will'
-	WOULD = 'would'
-	CAN = 'can'
-	COULD = 'could'
 
 
 def read_data(file):
@@ -197,8 +177,9 @@ def write_file(filename, sent_list):
 
 
 def main(input_file_article, question):
-	replaced_file = input_file_article + '.replaced'
-	coreference.coreference(input_file_article, replaced_file)
+	#replaced_file = input_file_article + '.replaced'
+	#coreference.coreference(input_file_article, replaced_file)
+	replaced_file = input_file_article
 	question = read_data(question)
 	article = read_data(replaced_file)
 

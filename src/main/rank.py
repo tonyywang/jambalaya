@@ -12,7 +12,7 @@ def sort_by_score(questions_list, num_questions, train):
 		if len(q) > 3:
 			list.append(q)
 	ques_list = pcfg.test_score(list, train)
-	print(ques_list)
+	# print(ques_list)
 	sentences = sorted(ques_list, key = lambda  x : q_score(x)+ques_list[x])
 	if len(sentences) > num_questions:
 		return sentences[0 : num_questions]
