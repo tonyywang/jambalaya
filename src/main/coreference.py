@@ -2,6 +2,7 @@ import requests
 import sys
 import time
 import io
+import unicodedata
 
 # curl -X POST \
 #  -H "Content-Type: application/json" \
@@ -14,6 +15,10 @@ headers = {
     'Accept': 'application/json',
 }
 
+data = {
+    "doCoreference": "true", "isolateSentences": "false",
+}
+
 # text = "Donald Trump is the president of USA. He is a business man."
 
 def preprocessing(file):
@@ -23,9 +28,10 @@ def preprocessing(file):
         #     list.append(line)
         text = a.read()
 
-    data = text.split('\n')
+    asciiOnly = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode()
+
+    data = asciiOnly.split('\n')
     # print(data)
-    # test = "\n".join(text.split('\n\n\n')[1:])
 
     return data
 
@@ -37,11 +43,10 @@ def concat(data):
     return "\n".join(paragraphs_only)
 
 def post(headers, paragraphs_only):
-    r = requests.post('http://localhost:8080/coreference/text', headers=headers, json={"text":paragraphs_only})
-    # print(r.text)
+    r = requests.post('http://localhost:8080/relationExtraction/text', headers=headers, json={"text":paragraphs_only})
+    # print(r.json())
     time.sleep(0.5)
-    article = r.json()['substitutedText']
-
+    article = r.json()
     return article
 
 
@@ -51,7 +56,6 @@ def coreference(file, output):
     article = post(headers, paragraphs_only)
     with io.open(output, 'w+', encoding='utf-8') as wf:
         wf.write(article)
-
 
 
 if __name__ == "__main__":
