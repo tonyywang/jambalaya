@@ -26,7 +26,6 @@ class Record:
 			self.tokens.add(str(token))
 
 
-
 	def print_record(self):
 		print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
 

@@ -1,0 +1,1 @@
+{'coreferenced': False, 'sentences': [{'originalSentence': 'Who is Barack Obama ?', 'sentenceIdx': 0, 'extractions': []}], 'extractions': []}

@@ -1,0 +1,26 @@
+{'coreferenced': False, 'sentences': 
+
+[
+{'originalSentence': 'Jim drank wine and ate steak .', 'sentenceIdx': 0, 'extractions': [{'id': '36e1e170f0964220832310647cddfaea', 'type': 'VERB_BASED', 'confidence': {'present': False}, 'sentenceIdx': 0, 'contextLayer': 0, 'relation': 'drank', 'arg1': 'Jim', 'arg2': 'wine', 'linkedContexts': [{'targetID': 'e4d271ab21e74ca8b02537f4b86a0ccd', 'classification': 'LIST'}], 'simpleContexts': []}, {'id': 'e4d271ab21e74ca8b02537f4b86a0ccd', 'type': 'VERB_BASED', 'confidence': {'present': False}, 'sentenceIdx': 0, 'contextLayer': 0, 'relation': 'ate', 'arg1': 'Jim', 'arg2': 'steak', 'linkedContexts': [{'targetID': '36e1e170f0964220832310647cddfaea', 'classification': 'LIST'}], 'simpleContexts': []}]}], 
+
+'extractions': [
+{'id': '36e1e170f0964220832310647cddfaea', 
+'type': 'VERB_BASED', 
+'confidence': {'present': False}, 
+'sentenceIdx': 0, 
+'contextLayer': 0, 
+'relation': 'drank', 
+'arg1': 'Jim', 
+'arg2': 'wine', 
+'linkedContexts': [{'targetID': 'e4d271ab21e74ca8b02537f4b86a0ccd', 'classification': 'LIST'}], 'simpleContexts': []}, 
+
+{'id': 'e4d271ab21e74ca8b02537f4b86a0ccd', 
+'type': 'VERB_BASED', 
+'confidence': {'present': False}, 
+'sentenceIdx': 0, 
+'contextLayer': 0, 
+'relation': 'ate', 
+'arg1': 'Jim', 
+'arg2': 'steak', 
+'linkedContexts': [{'targetID': '36e1e170f0964220832310647cddfaea', 'classification': 'LIST'}], 'simpleContexts': []}]
+}

@@ -25,9 +25,6 @@ def find_relevant_sentences(keywords, article):
 		matched_words = set(filter(set(keywords).__contains__, tokens))
 		article_dict[sentence] = len(matched_words)
 
-
-
-
 #Who
 def whoTemplate(record):
 	q = ['Who']

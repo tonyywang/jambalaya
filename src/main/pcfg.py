@@ -12,8 +12,6 @@ def read_data(file):
         text = str.lower(f.read().strip())
     return text
 
-
-
 def vocaulary_generate(text):
     vocaulary_count = {}
     sort_vocaulary = {}
