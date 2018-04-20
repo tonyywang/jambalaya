@@ -32,23 +32,9 @@ class Record:
 
 	def print_record(self):
 		print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
+		print('simplified sentences:')
+		print(self.sentences)
 
-	# only for Who
-	def match_keywords(self, keywords):
-		matched_words = set(filter(set(keywords).__contains__, self.tokens))
-
-		if len(matched_words) == 0:
-			return None
-
-		arg1 = set(self.arg1)
-		if not arg1.intersection(keywords):
-			return self.arg1
-		if not arg2.intersection(keywords):
-			return self.arg2
-		if not arg3.intersection(keywords):
-			return self.arg3
-
-		return None
 
 
 def mytest():
