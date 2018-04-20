@@ -6,7 +6,7 @@
 
 import spacy
 import json
-#curl -X POST -H "Content-Type: application/json"  -d '{"text":"Who gave the ball to Jim?", "doCoreference": "true", "isolateSentences": "false"}' -H "Accept: application/json" "http://localhost:8080/relationExtraction/text"
+#curl -X POST -H "Content-Type: application/json"  -d '{"text":"He has had a bad accident.", "doCoreference": "true", "isolateSentences": "false"}' -H "Accept: application/json" "http://localhost:8080/relationExtraction/text"
 
 
 
@@ -17,7 +17,11 @@ class Record:
 		self.arg2 = a2.lower()
 		self.arg3 = a3.lower()
 
-		self.sentence = self.arg2 + self.arg1 + self.arg3
+		self.sentences = []
+		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2)
+		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3)
+
+		# You can use the for loop to add similar relations and arg2s from WordNext.
 
 		self.tokens = set()
 		nlp = spacy.load('en')
