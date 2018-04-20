@@ -14,6 +14,8 @@ class WHType(Enum):
 	WHERE = 'where'
 	WHEN = 'when'
 	WHICH = 'which'
+	WHY = 'why'
+	HOW = 'how'
 #Binary type
 class BINType(Enum):
 	AM = 'am'
@@ -25,6 +27,7 @@ class BINType(Enum):
 	HAS = 'has'
 	HAVE = 'have'
 	DO = 'do'
+	DOES = 'does'
 	DID = 'did'
 	WILL = 'will'
 	WOULD = 'would'
