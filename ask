@@ -1,0 +1,3 @@
+
+#python3 src/main/simplify.py $1
+python3 src/main/question2.py src/resources/simplifiedSentences.txt $2
