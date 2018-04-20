@@ -1,3 +1,0 @@
-{'coreferenced': False, 'sentences': [
-{'originalSentence': 'John gave the ball to Jim .', 'sentenceIdx': 0, 'extractions': [{'id': 'b06e23053f2c490aa0b2c358423ac02b', 'type': 'VERB_BASED', 'confidence': {'present': False}, 'sentenceIdx': 0, 'contextLayer': 0, 'relation': 'gave', 'arg1': 'John', 'arg2': 'the ball', 'linkedContexts': [], 'simpleContexts': [{'text': 'to Jim .', 'classification': 'UNKNOWN', 'timeInformation': {'present': False}}]}]}
-], 
