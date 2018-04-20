@@ -285,12 +285,12 @@ if __name__ == "__main__":
 
 	text_file = sys.argv[1]
 	num_questions = int(sys.argv[2])
-	out_file = '../resources/questions.txt'
+	out_file = 'questions.txt'
+	#out_file = '../resources/questions.txt'
 	#replaced_file = text_file + '.replaced'
 	#coreference.coreference(text_file, replaced_file)
 	replaced_file = text_file
 	sentences = read_data(replaced_file)
-	question_list = []
 	bin_list = []
 	wh_list = []
 	# trim too-long sentences
@@ -303,7 +303,7 @@ if __name__ == "__main__":
 				bin_list.append(q)
 			for q in genWhQuestions(s):
 				wh_list.append(q)
-	print(len(question_list))
+	#print(len(question_list))
 	# sort_list = sort_by_score(question_list, num_questions)
 	sort_list = rank.get_best_n(bin_list, wh_list, num_questions, text_file)
 	for s in sort_list:
