@@ -41,11 +41,13 @@ def write_list(filename, sent_list):
             # wf.writelines(sent)
             wf.write(' '.join(sent) + '\n')
 
-def write_txt(filename, sent_list):
+def write_txt(filename, sent_list, extra):
     with io.open(filename, 'w') as wf:
         for sent in sent_list:
             # wf.writelines(sent)
             wf.write(sent + '\n')
+        for q in extra:
+            wf.write(q + '\n')
 
 
 
@@ -62,8 +64,8 @@ def get_hmm(txt, extra):
     txt_list = read_data(txt)
     # print(txt_list)
     revise_txt = '../resources/train_revise.txt'
-    write_txt(revise_txt, txt_list)
-    write_txt(revise_txt, extra)
+    write_txt(revise_txt, txt_list, extra)
+    # write_txt(revise_txt, extra)
     generate_tag(txt)
     command = './train_hmm.pl ../resources/train.tgs ../resources/train_revise.txt > ../resources/my.hmm'
     os.system(command)
