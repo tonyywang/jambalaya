@@ -57,12 +57,13 @@ def generate_tag(file):
 
 
 
-def get_hmm(txt):
+def get_hmm(txt, extra):
     # txt = '../resources/a1.txt'
     txt_list = read_data(txt)
     # print(txt_list)
     revise_txt = '../resources/train_revise.txt'
     write_txt(revise_txt, txt_list)
+    write_txt(revise_txt, extra)
     generate_tag(txt)
     command = './train_hmm.pl ../resources/train.tgs ../resources/train_revise.txt > ../resources/my.hmm'
     os.system(command)
