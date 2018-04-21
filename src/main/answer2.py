@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Decide the named entity type(person, place) of the answer
-
+from __future__ import division
 
 from rake_nltk import Rake
 import spacy
@@ -54,13 +54,28 @@ def find_relevant_sentences(keywords, article):
 		for token in doc:
 			tokens.add(str(token))
 		matched_words = set(filter(set(keywords).__contains__, tokens))
-		article_dict[sentence] = len(matched_words)
+		article_dict[sentence] = len(matched_words) / len(tokens)
 
 	relevant_sents = []
 	for (sentence, num_matchwords) in article_dict.most_common(TOP_K):
 		relevant_sents.append(sentence)
 
 	return relevant_sents
+
+def find_answer(keywords, article):
+	nlp = spacy.load('en')
+	article_dict = collections.Counter()
+	for sentence in article:
+		tokens = keywords_generation(sentence)
+		matched_words = set(filter(set(keywords).__contains__, tokens))
+		if (len(tokens) == 0):
+			article_dict[sentence] = 0
+		article_dict[sentence] = len(matched_words) / len(tokens)
+
+	if article_dict.most_common(1)[0][1] < 0.1:
+		answer = None
+	answer = article_dict.most_common(1)[0][0]
+	return answer
 
 # Parse sentence dependency parser
 def extract_answer_by_NER(relevant_sents, ner_list):
@@ -161,12 +176,13 @@ def answer_question(article, question):
 
 	relevant_sents = find_relevant_sentences(keywords, article)
 
-	answers = []
+	answer = None
 	if isinstance(question_type, WHType):
-		answers = answerWH(question_type, relevant_sents)
+		answer = find_answer(keywords,article)
+		#answers = answerWH(question_type, relevant_sents)
 	elif isinstance(question_type, BINType):
-		answers = answerBIN(question_type, relevant_sents)
-	return answers
+		answer = answerBIN(question_type, relevant_sents)
+	return answer
 
 
 def write_file(filename, sent_list):
@@ -187,8 +203,10 @@ def main(input_file_article, question):
 	out_file = '../resources/answers.txt'
 
 	for q in question:
+		print(q)
 		answer = answer_question(article, q)
-		if len(answer) == 0:
+		# if len(answer) == 0:
+		if answer is None:
 			answer = ["Woops, no answer."]
 		print(answer)
 		answer_list.append(answer)
