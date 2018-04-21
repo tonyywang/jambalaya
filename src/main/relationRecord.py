@@ -18,16 +18,20 @@ class Record:
 		self.arg3 = a3.lower()
 
 		self.sentences = []
-		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2)
-		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3)
+		if self.arg2 == '':
+			self.sentences.append(self.arg1 + ' ' + self.relation + '.')
+		else:
+			self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 +  '.')
+		if self.arg3 != '':
+			self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3)
 
 		# You can use the for loop to add similar relations and arg2s from WordNext.
 
-		self.tokens = set()
-		nlp = spacy.load('en')
-		doc = nlp(self.sentence)
-		for token in doc:
-			self.tokens.add(str(token))
+		# self.tokens = set()
+		# nlp = spacy.load('en')
+		# doc = nlp(self.sentence)
+		# for token in doc:
+		# 	self.tokens.add(str(token))
 
 
 	def print_record(self):
@@ -46,5 +50,6 @@ def mytest():
 		r = record["relation"]
 		arg1 = record["arg1"]
 		arg2 = record["arg2"]
-		context = record["simpleContexts"]
+		context = ''
 		Record(r, arg1, arg2, context).print_record()
+mytest()
