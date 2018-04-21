@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Tony Wang April 2018
-# Use Graphene to conduct open relation extraction
 
 import requests
-import json
 import sys
 import time
 import io
 import unicodedata
+from collections import defaultdict
+from relationRecord import Record
 
+### Graphene
 def preprocessing(file):
-    with open(file, 'r') as a:
+    with io.open(file, 'r') as a:
         # list = []
         # for line in a:
         #     list.append(line)
@@ -47,17 +48,53 @@ def post(paragraphs_only):
     return article
 
 
-def coreference(file, output):
+def graphene(file):
     data = preprocessing(file)
     paragraphs_only = concat(data)
     article = post(paragraphs_only)
-    with io.open(output, 'w+', encoding='utf-8') as wf:
-        wf.write(article)
+    return article
 
+#     with io.open(output, 'w+', encoding='utf-8') as wf:
+#         wf.write(article)
+#
+# def read(file):
+#     # loadedText = json.load(file)
+#
+#     with open(file, 'r') as a:
+#         text = a.read()
+#
+#     loadedText = json.loads(text)
+#
+#     return loadedText
+
+### Process files into relation dictionary of simplified sentences.
+### Output: {rel1: [sentence1, sentence2, ...], rel2: [sentence1, sentence2, ...], ...}
+
+def extraction(text):
+
+    extractions = text['extractions']
+
+    allRecords = defaultdict(list)
+
+    for i in range(0, len(extractions)):
+        extraction = extractions[i]
+        rel = extraction['relation']
+        arg1 = extraction['arg1']
+        arg2 = extraction['arg2']
+        if not extraction['simpleContexts']:
+            simpleContexts = ''
+        else:
+            simpleContexts = extraction['simpleContexts'][0]['text']
+
+        record = Record(rel, arg1, arg2, simpleContexts)
+        allRecords[rel].append(str(record))
+
+    return allRecords
 
 if __name__ == "__main__":
     file = sys.argv[1]
     data = preprocessing(file)
     paragraphs_only = concat(data)
     article = post(paragraphs_only)
-    print(json.dumps(article))
+    allRecords = extraction(article)
+    print(dict(allRecords))

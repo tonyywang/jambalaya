@@ -17,15 +17,16 @@ class Record:
 		self.arg2 = a2.lower()
 		self.arg3 = a3.lower()
 
-		self.sentences = []
+		# self.sentences = []
 		if self.arg2 == '':
-			self.sentences.append(self.arg1 + ' ' + self.relation + '.')
+			self.sentence = self.arg1 + ' ' + self.relation + '.'
 		else:
-			self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 +  '.')
+			self.sentence = self.arg1 + ' ' + self.relation + ' ' + self.arg2 +  '.'
 		if self.arg3 != '':
-			self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3)
+			self.sentence = self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3
 
 		# You can use the for loop to add similar relations and arg2s from WordNext.
+
 
 		# self.tokens = set()
 		# nlp = spacy.load('en')
@@ -33,23 +34,24 @@ class Record:
 		# for token in doc:
 		# 	self.tokens.add(str(token))
 
+	# def print_record(self):
+	# 	# print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
+	# 	# print('simplified sentences:')
+	# 	print(self.sentence)
 
-	def print_record(self):
-		print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
-		print('simplified sentences:')
-		print(self.sentences)
+	def __str__(self):
+		return self.sentence
 
 
-
-def mytest():
-	rels = '{"coreferenced":true,"sentences":[{"originalSentence":"It is a toy .","sentenceIdx":0,"extractions":[{"id":"3c0573f5a7fe44648782fbd7c3632020","type":"VERB_BASED","confidence":{"present":false},"sentenceIdx":0,"contextLayer":0,"relation":"is","arg1":"it","arg2":"a toy","linkedContexts":[],"simpleContexts":[]}]}],"extractions":[{"id":"3c0573f5a7fe44648782fbd7c3632020","type":"VERB_BASED","confidence":{"present":false},"sentenceIdx":0,"contextLayer":0,"relation":"is","arg1":"it","arg2":"a toy","linkedContexts":[],"simpleContexts":[]}]}'
-	a = json.loads(rels)
-	records = a["extractions"]
-	for idx in range(0,len(records)):
-		record = records[idx]
-		r = record["relation"]
-		arg1 = record["arg1"]
-		arg2 = record["arg2"]
-		context = ''
-		Record(r, arg1, arg2, context).print_record()
-mytest()
+# def mytest():
+# 	rels = '{"coreferenced":true,"sentences":[{"originalSentence":"It is a toy .","sentenceIdx":0,"extractions":[{"id":"3c0573f5a7fe44648782fbd7c3632020","type":"VERB_BASED","confidence":{"present":false},"sentenceIdx":0,"contextLayer":0,"relation":"is","arg1":"it","arg2":"a toy","linkedContexts":[],"simpleContexts":[]}]}],"extractions":[{"id":"3c0573f5a7fe44648782fbd7c3632020","type":"VERB_BASED","confidence":{"present":false},"sentenceIdx":0,"contextLayer":0,"relation":"is","arg1":"it","arg2":"a toy","linkedContexts":[],"simpleContexts":[]}]}'
+# 	a = json.loads(rels)
+# 	records = a["extractions"]
+# 	for idx in range(0,len(records)):
+# 		record = records[idx]
+# 		r = record["relation"]
+# 		arg1 = record["arg1"]
+# 		arg2 = record["arg2"]
+# 		context = ''
+# 		Record(r, arg1, arg2, context).print_record()
+# mytest()
