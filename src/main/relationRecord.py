@@ -6,16 +6,17 @@
 
 import spacy
 import json
-#curl -X POST -H "Content-Type: application/json"  -d '{"text":"He has had a bad accident.", "doCoreference": "true", "isolateSentences": "false"}' -H "Accept: application/json" "http://localhost:8080/relationExtraction/text"
+#curl -X POST -H "Content-Type: application/json"  -d '{"text":"A lot of chairs are in the room.", "doCoreference": "true", "isolateSentences": "false"}' -H "Accept: application/json" "http://localhost:8080/relationExtraction/text"
 
-
+# python -m spacy download en_core_web_lg
+nlp = spacy.load('en_core_web_lg')
 
 class Record:
 	def __init__(self, r, a1, a2, a3):
-		self.relation = r.lower()
-		self.arg1 = a1.lower()
-		self.arg2 = a2.lower()
-		self.arg3 = a3.lower()
+		self.relation = r
+		self.arg1 = a1
+		self.arg2 = a2
+		self.arg3 = a3[:-1]
 
 		# self.sentences = []
 		if self.arg2 == '':
@@ -23,7 +24,7 @@ class Record:
 		else:
 			self.sentence = self.arg1 + ' ' + self.relation + ' ' + self.arg2 +  '.'
 		if self.arg3 != '':
-			self.sentence = self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3
+			self.sentence = self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.'
 
 		# You can use the for loop to add similar relations and arg2s from WordNext.
 
@@ -34,13 +35,34 @@ class Record:
 		# for token in doc:
 		# 	self.tokens.add(str(token))
 
-	# def print_record(self):
-	# 	# print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
-	# 	# print('simplified sentences:')
-	# 	print(self.sentence)
+	def print_record(self):
+		# print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
+		# print('simplified sentences:')
+		print(self.sentence)
+
+	# sub, NER, att
+	# Tom,  PERSON, book
+	# 3, CARDINAL, people
+	def dealArg1(self):
+		doc = nlp(self.arg1)
+		# only one sent.
+		for sent in doc.sents:
+			root_loc = sent.root.i
+			root_token = doc[root_loc]
+
+			for ent in doc.ents:
+				if root_token.text_with_ws not in ent.text:
+					return ent.text, ent.label_, root_token.text_with_ws
+				else:
+					return ent.text, ent.label_, None  # No attribute
+		return None, None, None
+
+
 
 	def __str__(self):
-		return self.sentence
+		return self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )'
+		#return self.sentence
+
 
 
 # def mytest():
