@@ -16,6 +16,10 @@ class WHType(Enum):
 	WHICH = 'which'
 	WHY = 'why'
 	HOW = 'how'
+	HOWMANY = 'how many'
+	HOWOLD = 'how old'
+	HOWLONG = 'how long'
+	HOWOFTEN = 'how often'
 #Binary type
 class BINType(Enum):
 	AM = 'am'
@@ -38,7 +42,9 @@ class BINType(Enum):
 def detect_type(question):
 	question = question.lower()
 	for w_type in WHType:
-		if question.startswith(w_type.value):
+		# if question.startswith(w_type.value):
+		# 	return w_type
+		if w_type.value in question:
 			return w_type
 
 	for b_type in BINType:
@@ -47,15 +53,15 @@ def detect_type(question):
 
 	return 'Unknown question type'
 
-# check for lexical category; might be slow needs testing
-def checkCategory(text):
-	for synset in wn.synsets(text):
-		if synset.lexname == noun.location:
-			return WHType.WHERE
-		if synset.lexname == noun.time:
-			return WHType.WHEN
-		# if synset.lexname == noun.quantity:
-		# 	return WHType.HOWMUCH?
-		else:
-			sysnet.lexname == noun.location:
-			return WHTYPE.WHAT
+# # check for lexical category; might be slow needs testing
+# def checkCategory(text):
+# 	for synset in wn.synsets(text):
+# 		if synset.lexname == noun.location:
+# 			return WHType.WHERE
+# 		if synset.lexname == noun.time:
+# 			return WHType.WHEN
+# 		# if synset.lexname == noun.quantity:
+# 		# 	return WHType.HOWMUCH?
+# 		else:
+# 			sysnet.lexname == noun.location:
+# 			return WHTYPE.WHAT
