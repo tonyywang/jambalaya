@@ -13,9 +13,9 @@ import json
 class Record:
 	def __init__(self, r, a1, a2, a3):
 		self.relation = r.lower()
-		self.arg1 = a1.lower()
-		self.arg2 = a2.lower()
-		self.arg3 = a3.lower()
+		self.arg1 = a1
+		self.arg2 = a2
+		self.arg3 = a3
 
 		# self.sentences = []
 		if self.arg2 == '':

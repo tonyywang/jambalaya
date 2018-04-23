@@ -46,3 +46,8 @@ def detect_type(question):
 			return b_type
 
 	return 'Unknown question type'
+
+def checkCategory(text):
+	for synset in wn.synsets(text):
+		if synset.lexname == noun.location:
+			return 
