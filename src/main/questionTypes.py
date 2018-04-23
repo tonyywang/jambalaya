@@ -41,15 +41,16 @@ class BINType(Enum):
 # isinstance(obj, WHType)
 def detect_type(question):
 	question = question.lower()
+
+	for b_type in BINType:
+		if question.startswith(b_type.value):
+			return b_type
+
 	for w_type in WHType:
 		# if question.startswith(w_type.value):
 		# 	return w_type
 		if w_type.value in question:
 			return w_type
-
-	for b_type in BINType:
-		if question.startswith(b_type.value):
-			return b_type
 
 	return 'Unknown question type'
 

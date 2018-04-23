@@ -34,6 +34,9 @@ class Record:
 		self.arg2 = a2.strip()
 		self.arg3 = a3[:-1].strip()
 
+	def getArg123(self):
+		return self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.'
+
 	def getKeywords(self):
 		sent = self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.'
 		return sent, keywords_generation(sent)
