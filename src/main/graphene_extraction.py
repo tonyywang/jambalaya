@@ -98,6 +98,26 @@ def extraction(text):
 
     return allRecords
 
+
+def readRecordDict(file):
+    s = open(file, 'r', encoding='utf-8').read()
+    my_dict = eval(s)
+
+    allRecords = defaultdict(list)
+    for rel, l in my_dict.items():
+        for item in l:
+            rel, arg1, arg2, arg3 = item.split(' ### ')
+            allRecords[rel].append(Record(rel, arg1, arg2, arg3))
+    return allRecords
+
+
+def extractDictRecords(file):
+    data = preprocessing(file)
+    paragraphs_only = concat(data)
+    article = post(paragraphs_only)
+    allRecords = extraction(article)
+    return allRecords
+
 if __name__ == "__main__":
     file = sys.argv[1]
     data = preprocessing(file)
