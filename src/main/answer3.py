@@ -81,16 +81,9 @@ def answerWH(question_type, ranked_records, keywords):
 						return word
 				elif question_type == WHType.WHOSE and tag in ['PERSON']:
 					return word
-				elif question_type == WHType.WHERE:
-					if tag in ['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']:
+				elif question_type == WHType.WHERE and tag in \
+					['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']:
 						return word  # or return arg3?
-					else:
-						# context, tag = checkCategory(arg)
-						# if tag in [noun.location]:
-						# 	return context
-						# else
-						# 	return None
-
 				elif question_type == WHType.WHEN and tag in ['DATE']:
 					return word
 				elif question_type == WHType.WHOM and tag in ['PERSON']:  # Need to and this in questionGen
