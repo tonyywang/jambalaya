@@ -4,45 +4,49 @@
 # Author: Wei Wang
 # Created: 4/17/2018
 
-import spacy
-import json
+
 #curl -X POST -H "Content-Type: application/json"  -d '{"text":"Gemini is one of the constellations of the zodiac. It was one of the 48 constellations described by the 2nd century AD astronomer Ptolemy and it remains one of the 88 modern constellations today. Its name is Latin for twins, and it is associated with the twins Castor and Pollux in Greek mythology.", "doCoreference": "true", "isolateSentences": "false"}' -H "Accept: application/json" "http://localhost:8080/relationExtraction/text"
 
 #curl -X POST -H "Content-Type: application/json"  -d '{"text": "Gemini is one of the constellations of the zodiac. It was one of the 48 constellations described by the 2nd century AD astronomer Ptolemy and it remains one of the 88 modern constellations today. Its name is Latin for twins, and it is associated with the twins Castor and Pollux in Greek mythology."}' -H "Accept: application/json" "http://localhost:8080/coreference/text"
 
 
+#conda install -c asmeurer pattern
+#from pattern.en import lemma
+from nltk.stem import PorterStemmer
 from rake_nltk import Rake
 # Generate keywords for quetion
 def keywords_generation(question):
+	ps = PorterStemmer()
 	r = Rake()
-	r.extract_keywords_from_text(question)
-	keywords = r.get_ranked_phrases()
+	r.extract_keywords_from_text(question.lower())
+	phrases = r.get_ranked_phrases()
+	keywords = set()
+	for p in phrases:
+		for w in p.split():
+			keywords.add(ps.stem(w))
 	return keywords
 
 
 class Record:
 	def __init__(self, r, a1, a2, a3):
-		self.relation = r
-		self.arg1 = a1
-		self.arg2 = a2
-		self.arg3 = a3[:-1]
+		self.relation = r.strip()
+		self.arg1 = a1.strip()
+		self.arg2 = a2.strip()
+		self.arg3 = a3[:-1].strip()
 
 	def getKeywords(self):
-		return keywords_generation(' '.join([self.relation, self.arg1, self.arg2, self.arg3]))
+		sent = self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.'
+		return sent, keywords_generation(sent)
 
-	def getSimplifiedSentences(self):
-		pass
-		# self.sentences = []
-		#
-		# if self.arg1 != '' and self.relation != '':
-		# 	if self.arg2 == '':
-		# 		self.sentences.append(self.arg1 + ' ' + self.relation + '.')
-		# 	else:
-		# 		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 +  '.')
-		# 	if self.arg3 != '':
-		# 		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.')
-
-		# You can use the for loop to add similar relations and arg2s from WordNext.
+	def findMissingArg(self, keywords):
+		args = [self.arg1, self.arg2, self.arg3]
+		missing_args = []
+		for arg in args:
+			if arg == '':
+				continue
+			if len(keywords.intersection(keywords_generation(arg))) == 0:
+				missing_args.append(arg)
+		return missing_args
 
 	def print_record(self):
 		print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
