@@ -32,9 +32,13 @@ def concat(data):
         if len(section) > 100:
             paragraphs_only.append(section)
     return "\n".join(paragraphs_only)
-
+    # return paragraphs_only
 
 def post(paragraphs_only):
+
+    # article = []
+    #
+    # for i in range(len(paragraphs_only)):
 
     headers = {
         'Content-Type': 'application/json',
@@ -45,6 +49,9 @@ def post(paragraphs_only):
     # print(r.json())
     time.sleep(0.5)
     article = r.json()
+    # article.append(paragraph)
+
+    # return "\n".join(paragraphs_only)
     return article
 
 

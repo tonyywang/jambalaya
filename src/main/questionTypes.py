@@ -46,3 +46,16 @@ def detect_type(question):
 			return b_type
 
 	return 'Unknown question type'
+
+# check for lexical category; might be slow needs testing
+def checkCategory(text):
+	for synset in wn.synsets(text):
+		if synset.lexname == noun.location:
+			return WHType.WHERE
+		if synset.lexname == noun.time:
+			return WHType.WHEN
+		# if synset.lexname == noun.quantity:
+		# 	return WHType.HOWMUCH?
+		else:
+			sysnet.lexname == noun.location:
+			return WHTYPE.WHAT
