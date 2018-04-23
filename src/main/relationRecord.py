@@ -6,10 +6,19 @@
 
 import spacy
 import json
-#curl -X POST -H "Content-Type: application/json"  -d '{"text":"A lot of chairs are in the room.", "doCoreference": "true", "isolateSentences": "false"}' -H "Accept: application/json" "http://localhost:8080/relationExtraction/text"
+#curl -X POST -H "Content-Type: application/json"  -d '{"text":"Gemini is one of the constellations of the zodiac. It was one of the 48 constellations described by the 2nd century AD astronomer Ptolemy and it remains one of the 88 modern constellations today. Its name is Latin for twins, and it is associated with the twins Castor and Pollux in Greek mythology.", "doCoreference": "true", "isolateSentences": "false"}' -H "Accept: application/json" "http://localhost:8080/relationExtraction/text"
 
-# python -m spacy download en_core_web_lg
-nlp = spacy.load('en_core_web_lg')
+#curl -X POST -H "Content-Type: application/json"  -d '{"text": "Gemini is one of the constellations of the zodiac. It was one of the 48 constellations described by the 2nd century AD astronomer Ptolemy and it remains one of the 88 modern constellations today. Its name is Latin for twins, and it is associated with the twins Castor and Pollux in Greek mythology."}' -H "Accept: application/json" "http://localhost:8080/coreference/text"
+
+
+from rake_nltk import Rake
+# Generate keywords for quetion
+def keywords_generation(question):
+	r = Rake()
+	r.extract_keywords_from_text(question)
+	keywords = r.get_ranked_phrases()
+	return keywords
+
 
 class Record:
 	def __init__(self, r, a1, a2, a3):
@@ -18,51 +27,30 @@ class Record:
 		self.arg2 = a2
 		self.arg3 = a3[:-1]
 
+	def getKeywords(self):
+		return keywords_generation(' '.join([self.relation, self.arg1, self.arg2, self.arg3]))
+
+	def getSimplifiedSentences(self):
+		pass
 		# self.sentences = []
-		if self.arg2 == '':
-			self.sentence = self.arg1 + ' ' + self.relation + '.'
-		else:
-			self.sentence = self.arg1 + ' ' + self.relation + ' ' + self.arg2 +  '.'
-		if self.arg3 != '':
-			self.sentence = self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.'
+		#
+		# if self.arg1 != '' and self.relation != '':
+		# 	if self.arg2 == '':
+		# 		self.sentences.append(self.arg1 + ' ' + self.relation + '.')
+		# 	else:
+		# 		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 +  '.')
+		# 	if self.arg3 != '':
+		# 		self.sentences.append(self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.')
 
 		# You can use the for loop to add similar relations and arg2s from WordNext.
 
-
-		# self.tokens = set()
-		# nlp = spacy.load('en')
-		# doc = nlp(self.sentence)
-		# for token in doc:
-		# 	self.tokens.add(str(token))
-
 	def print_record(self):
-		# print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
-		# print('simplified sentences:')
-		print(self.sentence)
-
-	# sub, NER, att
-	# Tom,  PERSON, book
-	# 3, CARDINAL, people
-	def dealArg1(self):
-		doc = nlp(self.arg1)
-		# only one sent.
-		for sent in doc.sents:
-			root_loc = sent.root.i
-			root_token = doc[root_loc]
-
-			for ent in doc.ents:
-				if root_token.text_with_ws not in ent.text:
-					return ent.text, ent.label_, root_token.text_with_ws
-				else:
-					return ent.text, ent.label_, None  # No attribute
-		return None, None, None
-
+		print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
 
 
 	def __str__(self):
-		return self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )'
-		#return self.sentence
-
+		l = [self.relation, self.arg1, self.arg2, self.arg3]
+		return ' ### '.join(l)
 
 
 # def mytest():

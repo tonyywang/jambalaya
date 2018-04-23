@@ -13,10 +13,14 @@ from questionTypes import WHType
 from questionTypes import BINType
 from questionTypes import detect_type
 from relationRecord import Record
+from graphene_extraction import readRecordDict
 
 TOP_K = 10
 
+# python -m spacy download en_core_web_lg
+# nlp = spacy.load('en_core_web_lg')
 nlp = spacy.load('en')
+
 
 def read_data(file):
     with open(file) as f:
@@ -45,6 +49,8 @@ def keywords_generation(question):
 	keywords = r.get_ranked_phrases()
 	return keywords
 
+print(keywords_generation('Volta was not born in Como.'))
+
 # topK Most Relevant Sentences
 def find_relevant_sentences(keywords, article):
 	article_dict = collections.Counter()
@@ -71,10 +77,15 @@ def find_answer(keywords, article):
 			article_dict[sentence] = 0
 		article_dict[sentence] = len(matched_words) / len(tokens)
 
-	if article_dict.most_common(1)[0][1] < 0.1:
-		answer = None
-	answer = article_dict.most_common(1)[0][0]
-	return answer
+	# relevant_sents = []
+	# for (sentence, num_matchwords) in article_dict.most_common(TOP_K):
+	# 	relevant_sents.append(sentence)
+	#
+	#
+	# if article_dict.most_common(1)[0][1] < 0.1:
+	# 	answer = None
+	# answer = article_dict.most_common(1)[0][0]
+	# return answer
 
 # Parse sentence dependency parser
 def extract_answer_by_NER(relevant_sents, ner_list):
@@ -89,29 +100,95 @@ def extract_answer_by_NER(relevant_sents, ner_list):
 	return answers
 
 
+
+# context, NER, att
+# Tom,  PERSON, book
+# 3, CARDINAL, people
+def dealArg(arg):
+	if arg is None:
+		return None, None, None
+	doc = nlp(arg)
+	# only one sent.
+	for sent in doc.sents:
+		root_loc = sent.root.i
+		root_token = doc[root_loc]
+
+		for ent in doc.ents:
+			if root_token.text_with_ws not in ent.text:
+				return ent.text, ent.label_, root_token.text_with_ws
+			else:
+				return ent.text, ent.label_, None  # No attribute
+	return None, None, None
+
+
 # find an answer from sorted relevant_records
-def answerSub(question_type, relevant_records):
-	for record in relevant_records:
-		sub, ner, att = record.dealArg1()
+def answerArg1(question_type, ranked_records):
+	for record in ranked_records:
+		if record.arg1 == '':
+			continue
+
+		sub, ner, att = dealArg(record.arg1)
 		if question_type == WHType.WHO and ner in ['PERSON']:
 			return sub
 		elif question_type == WHType.WHOSE and ner in ['PERSON']:
 			return sub
-		elif question_type == WHType.HOWMANY and ner in ['CARDINAL']:
-			return sub
-		elif question_type == WHType.WHAT:
-			return sub
 	return None
+
+def answerArg3(question_type, ranked_records):
+	for record in ranked_records:
+		if record.arg3 == '':
+			continue
+
+		context, ner, _ = dealArg(record.arg3)
+		if question_type == WHType.WHERE and ner in ['LOC']:
+			return context # or return arg3?
+		elif question_type == WHType.WHEN and ner in ['DATE']:
+			return context
+		elif question_type == WHType.WHOM and ner in ['PERSON']: # Need to and this in questionGen
+			return context
+		elif question_type == WHType.HOW:
+			return 'None.something'
+		elif question_type == WHType.HOWLONG:
+			return 'None.something'
+		elif question_type == WHType.HOWOFTEN:
+			return 'None.something'
+	return None
+
+# return score, answer???
+def answerArg123(question_type, ranked_records):
+
+	for record in ranked_records:
+		args = []
+		if record.arg1 != '':
+			args.append(record.arg1)
+		elif record.arg2 != '':
+			args.append(record.arg2)
+		elif record.arg3 != '':
+			args.append(record.arg3)
+		else:
+			continue
+
+		for arg in args:
+			context, ner, att = dealArg(arg)
+			if question_type == WHType.HOWMANY and ner in ['CARDINAL']:
+				return context
+			elif question_type == WHType.WHAT:
+				return context  # or None.something
+	return 'None.something'
 
 def test():
 	listRecords = [Record('had been watching', 'Tom', 'the ball', ''),
 				   Record('watched', 'Tom', 'the ball', ''),
 				   Record('is', "Tom's book", 'opening', ''),
-				   Record('attended', '3 people', 'the meeting', '')]
-	print(answerSub(WHType.WHO, listRecords))
-	print(answerSub(WHType.WHOSE, listRecords))
-	print(answerSub(WHType.HOWMANY, listRecords))
-test()
+				   Record('attended', '3 people', 'the meeting', ''),
+				   Record('was born', 'he', '', 'at Woolsthorpe Manor'),
+				   Record('died', 'he', 'March 1727', 'on 31 .')]
+	print(answerArg1(WHType.WHO, listRecords))
+	print(answerArg1(WHType.WHOSE, listRecords))
+	print(answerArg1(WHType.HOWMANY, listRecords))
+	print(answerArg3(WHType.WHERE, listRecords))
+	print(answerArg3(WHType.WHEN, listRecords))
+
 
 def extract_dobj(relevant_sents):
 	# He has finished his homework.
@@ -124,29 +201,14 @@ def extract_dobj(relevant_sents):
 					answers.append(chunk.text)
 	return answers
 
-def answerWH(question_type, relevant_sents):
-	answers = []
-	if question_type == WHType.WHAT:
-		answers = extract_dobj(relevant_sents)
-		return answers
-
-	ner_list = []
-	if question_type in [WHType.WHO, WHType.WHOSE, WHType.WHOM]:
-		ner_list = ["PERSON"]
-	elif question_type == WHType.WHERE:
-		ner_list = ["LOC", "ORG", "GPE"]
-	elif question_type == WHType.WHEN:
-		ner_list = ["DATE", "TIME"]
-	elif question_type == WHType.WHERE:
-		ner_list = ["ORG", "GPE", "LOC"]
-
-
-
-	# for sent in relevant_sents:
-	# 	answer = extract_answer_by_NER(sent, ner_list)
-	# 	answers.append(answer)
-	answers = extract_answer_by_NER(relevant_sents, ner_list)
-	return answers
+def answerWH(question_type, relevant_records):
+	if question_type in [WHType.WHO, WHType.WHOSE, WHType.HOWMANY]:
+		return answerArg1(question_type, relevant_records)
+	elif question_type in [WHType.WHERE, WHType.WHEN]:
+		return answerArg3(question_type, relevant_records)
+	elif question_type in [WHType.WHAT, WHType.HOWMANY]:
+		return answerArg123(question_type, relevant_records)
+	return None
 
 
 def extract_answer_by_not(sent, not_list):
@@ -191,20 +253,27 @@ def answerBIN(question_type, relevant_sents):
 		# answers.append(answer)
 	return answer
 
+
+def find_relevant_records(dict_records, keywords):
+	relevant_records = []
+	for rel, list_records in dict_records.items():
+		for record in list_records:
+			if len(set(keywords).intersection(set(record.getKeywords()))) != 0:
+				relevant_records.append(record)
+				record.print_record()
+	return relevant_records
+
+
 #'Who is the presentend?'
-def answer_question(article, question):
+def answer_question(dict_records, question):
 	keywords = keywords_generation(question)
+	relevant_records = find_relevant_records(dict_records, keywords)
 	question_type = detect_type(question)
-
-	relevant_sents = find_relevant_sentences(keywords, article)
-
-	answer = None
 	if isinstance(question_type, WHType):
-		answer = find_answer(keywords,article)
-		#answers = answerWH(question_type, relevant_sents)
+		return answerWH(question_type, relevant_records)
 	elif isinstance(question_type, BINType):
-		answer = answerBIN(question_type, relevant_sents)
-	return answer
+		return answerBIN(question_type, relevant_records)
+	return None
 
 
 def write_file(filename, sent_list):
@@ -214,28 +283,30 @@ def write_file(filename, sent_list):
 			# f.write('\n'.join(sent)+'\r\n')
 
 
-def main(input_file_article, question):
-	#replaced_file = input_file_article + '.replaced'
-	#coreference.coreference(input_file_article, replaced_file)
-	replaced_file = input_file_article
-	question = read_data(question)
-	article = read_data(replaced_file)
+
+
+
+
+if __name__ == "__main__":
+	# article = sys.argv[1]
+	# question_file = sys.argv[2]
+
+
+
+	records_file = '../resources/records.txt'
+	question_file = '../resources/question_Alessandro_Volta.txt'
+
+
+
+	questions = read_data(question_file)
+
+	dict_records = readRecordDict(records_file)
 
 	answer_list = []
-	out_file = '../resources/answers.txt'
-
-	for q in question:
+	for q in questions:
 		print(q)
-		answer = answer_question(article, q)
-		# if len(answer) == 0:
+		answer = answer_question(dict_records, q)
 		if answer is None:
-			answer = ["Woops, no answer."]
+			answer = 'Woops, no answer.'
 		print(answer)
-		answer_list.append(answer)
-	write_file(out_file, answer_list)
 
-
-# if __name__ == "__main__":
-# 	article = sys.argv[1]
-# 	question = sys.argv[2]
-# 	main(article, question)
