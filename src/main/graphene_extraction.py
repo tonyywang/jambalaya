@@ -29,7 +29,7 @@ def preprocessing(file):
 def concat(data):
     paragraphs_only = []
     for section in data:
-        if len(section) > 100:
+        if len(section) > 30:
             paragraphs_only.append(section)
     return "\n".join(paragraphs_only)
     # return paragraphs_only
