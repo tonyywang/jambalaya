@@ -46,3 +46,7 @@ def get_best_n(bin_list, wh_list, num_questions, text_file, hmmfile):
 	return best_list
 
 
+def get_best_q_n(q_list, num_questions, text_file, hmmfile):
+	best_list = sort_by_score(q_list, num_questions, text_file, hmmfile)
+	#random.shuffle(best_list)
+	return best_list
