@@ -200,7 +200,6 @@ def genAuxQuestion(b_type, listRecords):
 
 	return q_list
 
-
 def genRealVerbQuestion(relation, listRecords):
 	q_list = []
 	aux_verb, verb = dealVerbTense(relation)

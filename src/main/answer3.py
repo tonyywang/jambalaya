@@ -39,6 +39,28 @@ def dealArg(arg):
 	doc = nlp(arg)
 	word_tag_list = []
 
+	for token in doc:
+		lexicalTags = []
+	    if token.dep_ == 'dobj' and token.tag_ != 'NNP' and token.tag_ != '-PRON-':
+			for synset in wn.synsets(token):
+				lexicalTags.append(synset.lexname())
+			for tag in lexicalTags:
+				if synset.lexname == noun.location:
+					return WHType.WHERE
+				if synset.lexname == noun.time:
+					return WHType.WHEN
+				# if synset.lexname == noun.quantity:
+				# 	return WHType.HOWMUCH?
+				else:
+					sysnet.lexname == noun.location:
+					return WHTYPE.WHAT
+
+	    if token.dep_ == 'pobj' and token.tag_ != 'NNP' and token.tag_ != '-PRON-':
+	        print(wn.synset(token.lemma_ + '.n.01').lexname)
+	        # for synset in list(wn.all_synsets('n'))[:3]:
+	        #     print(token.text)
+	        #     print(synset)
+
 	# only one sent.
 	for sent in doc.sents:
 		root_loc = sent.root.i
@@ -77,16 +99,16 @@ def answerWH(question_type, ranked_records, keywords):
 			word_tag_list = dealArg(arg)
 			for word, tag in word_tag_list:
 				if question_type == WHType.WHO:
-					if tag in ['PERSON']:
+					if tag in ['PERSON', 'noun.person']:
 						return word
-				elif question_type == WHType.WHOSE and tag in ['PERSON']:
+				elif question_type == WHType.WHOSE and tag in ['PERSON', 'noun.person']:
 					return word
 				elif question_type == WHType.WHERE and tag in \
 					['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']:
 						return word  # or return arg3?
-				elif question_type == WHType.WHEN and tag in ['DATE']:
+				elif question_type == WHType.WHEN and tag in ['DATE', 'noun.time']:
 					return word
-				elif question_type == WHType.WHOM and tag in ['PERSON']:  # Need to and this in questionGen
+				elif question_type == WHType.WHOM and tag in ['PERSON', 'noun.person']:  # Need to and this in questionGen
 					return word
 				elif question_type == WHType.HOW:
 					return 'None.something'
@@ -95,7 +117,7 @@ def answerWH(question_type, ranked_records, keywords):
 				elif question_type == WHType.HOWOFTEN:
 					return 'None.something'
 
-				elif question_type == WHType.HOWMANY and tag in ['CARDINAL']:
+				elif question_type == WHType.HOWMANY and tag in ['CARDINAL', 'noun.quantity']:
 					return word
 				elif question_type == WHType.WHAT:
 					return word  # or None.something

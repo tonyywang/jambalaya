@@ -16,7 +16,7 @@ from relationRecord import Record
 # for tok in sstp:
 #    print(tok)
 
-for synset in wn.synsets('school.n.01'):
+for synset in wn.synsets('person'):
     print(synset.lexname())
 
 # ### Wordnet
