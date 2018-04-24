@@ -12,6 +12,7 @@ import io
 from questionTypes import WHType
 from questionTypes import BINType
 from questionTypes import detect_type
+from questionTypes import TAGList
 from relationRecord import Record
 from relationRecord import keywords_generation
 from graphene_extraction import readRecordDict
@@ -54,6 +55,7 @@ def dealArg(arg):
 			if token.ent_type_ == "":
 				if token.tag_ != 'NNP' and token.tag_ != '-PRON-':
 					for synset in wn.synsets(token.text):
+						# word_tag_list.add((token.text, synset.lexname))
 						if synset.lexname() == 'noun.person':
 							print(token.text)
 							word_tag_list.add((token.text, 'noun.person'))
@@ -98,33 +100,33 @@ def find_relevant_records(dict_records, keywords):
 
 def answerWH(question_type, ranked_records, keywords):
 	for record, score in ranked_records:
-		cands = record.findMissingArg(keywords)
-		for arg in cands:
-			word_tag_list = dealArg(arg)
-			for word, tag in word_tag_list:
-				if question_type == WHType.WHO:
-					if tag in ['PERSON', 'noun.person']:
+		if question_type == WHType.WHAT:
+			ans = record.isMissingArg2(keywords)
+			if ans is not None:
+				return ans
+		else:
+			cands = record.findMissingArg(keywords)
+			if len(cands) == 0:
+				return None
+			for arg in cands:
+				word_tag_list = dealArg(arg)
+				for word, tag in word_tag_list:
+					if (question_type == WHType.WHO or question_type == WHType.WHOSE or question_type == WHType.WHOM)\
+						and tag in TAGList.WHO_TAGS.value:
+							return word
+					elif question_type == WHType.WHERE and tag in TAGList.WHERE_TAGS.value:
+							return word  # or return arg3?
+					elif question_type == WHType.WHEN and tag in TAGList.WHEN_TAGS.value:
 						return word
-				elif question_type == WHType.WHOSE and tag in ['PERSON', 'noun.person', 'noun.group']:
-					return word
-				elif question_type == WHType.WHERE and tag in \
-					['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']:
-						return word  # or return arg3?
-				elif question_type == WHType.WHEN and tag in ['DATE', 'noun.time']:
-					return word
-				elif question_type == WHType.WHOM and tag in ['PERSON', 'noun.person']:  # Need to and this in questionGen
-					return word
-				elif question_type == WHType.HOW:
-					return 'None.something'
-				elif question_type == WHType.HOWLONG:
-					return 'None.something'
-				elif question_type == WHType.HOWOFTEN:
-					return 'None.something'
+					elif question_type == WHType.HOW:
+						return 'None.something'
+					elif question_type == WHType.HOWLONG:
+						return 'sss'
+					elif question_type == WHType.HOWOFTEN:
+						return 'None.something'
 
-				elif question_type == WHType.HOWMANY and tag in ['CARDINAL', 'noun.quantity']:
-					return word
-				elif question_type == WHType.WHAT:
-					return word  # or None.something
+					elif question_type == WHType.HOWMANY and tag in TAGList.HOWMANY_TAGS.value:
+						return word
 	return None
 
 
@@ -172,13 +174,17 @@ if __name__ == "__main__":
 
 
 
-	records_file = '../resources/records.txt'
+	records_file = '../resources/records_Alessandro_Volta.txt'
 	question_file = '../resources/question_Alessandro_Volta.txt'
 	questions = read_data(question_file)
 
-	# questions = ['When did Volta retire?',
+	# records_file = '../resources/records_cougar.txt'
+	# questions = ["How long is an adult cougar's paw print?"]
+
+	# questions = ["What did Alessandro Volta invent in 1800?"]
+	# questions = ['What did Alessandro Volta invent in 1800?',
+	# 			 'When did Volta retire?',
 	# 			'Who did Alessandro Volta marry?',
-	# 			 # 'What did Alessandro Volta invent in 1800?',
 	# 			 'When did Alessandro Volta improve  and popularize the electrophorus?',
 	# 			 # 'How long was Alessandro Volta a professor at the University of Pavia?',
 	# 			 'Where was Volta born?']

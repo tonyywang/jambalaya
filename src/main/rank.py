@@ -8,7 +8,7 @@ import hmm_prob
 
 # CORPUS = '../resources/my.hmm'
 
-def sort_by_score(questions_list, num_questions, train, hmmfile):
+def sort_by_score(questions_list, num_questions, hmmfile):
 	# train = './a1.txt'
 	list = []
 	for q in questions_list:
@@ -32,12 +32,12 @@ def q_score(q):
 	return total_score
 
 
-def get_best_n(bin_list, wh_list, num_questions, text_file, hmmfile):
+def get_best_n(bin_list, wh_list, num_questions, hmmfile):
 	best_list = []
 	bin_num = num_questions//3
 	wh_num = num_questions - bin_num
-	bin_list = sort_by_score(bin_list, bin_num, text_file, hmmfile)
-	wh_list = sort_by_score(wh_list, wh_num, text_file, hmmfile)
+	bin_list = sort_by_score(bin_list, bin_num, hmmfile)
+	wh_list = sort_by_score(wh_list, wh_num, hmmfile)
 	for q in bin_list:
 		best_list.append(q)
 	for q in wh_list:
@@ -46,7 +46,7 @@ def get_best_n(bin_list, wh_list, num_questions, text_file, hmmfile):
 	return best_list
 
 
-def get_best_q_n(q_list, num_questions, text_file, hmmfile):
-	best_list = sort_by_score(q_list, num_questions, text_file, hmmfile)
+def get_best_q_n(q_list, num_questions, hmmfile):
+	best_list = sort_by_score(q_list, num_questions, hmmfile)
 	#random.shuffle(best_list)
 	return best_list

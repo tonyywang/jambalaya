@@ -17,6 +17,9 @@ import generate_hmm
 from questionTypes import BINType
 from questionTypes import WHType
 from relationRecord import Record
+from questionTypes import TAGList
+from nltk.corpus import wordnet as wn
+
 #from answer3 import dealArg
 
 from graphene_extraction import readRecordDict
@@ -131,6 +134,14 @@ def dealArg(arg):
 
 	# for token in tokens, do word_tag_list.append((word, tag))
 
+	for token in doc:
+		# lexicalTags = set()
+		if token.dep_ == 'nsubj' or token.dep_ == 'dobj' or token.dep_ == 'pobj':
+			if token.ent_type_ == '' and token.tag_ != 'NNP' and token.tag_ != '-PRON-':
+				for synset in wn.synsets(token.text):
+					remain = arg.strip(token.text)
+					word_tag_list.append((token.text, synset.lexname, remain))
+
 	return word_tag_list
 
 
@@ -164,7 +175,7 @@ def gen_wh_list3(q, arg):
 	q_list = []
 	word_tag_list = dealArg(arg)  # He was in Woolsthorpe Manor. --arg2='', arg3 = 'in Woolsthorpe Manor'
 	for word, tag, att in word_tag_list:
-		if tag in ['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']:
+		if tag in TAGList.WHERE_TAGS.value:
 			q_list.append(WHType.WHERE.value + q)
 		elif tag in ['DATE']:
 			q_list.append(WHType.WHEN.value + q)
@@ -331,39 +342,27 @@ def test():
 
 
 
-# if __name__ == "__main__":
-# 	records_file = '../resources/records.txt'
-# 	#num_questions = int(sys.argv[2])
-# 	num_questions = int('20')
-#
-#
-#
-#
-# 	dict_records = readRecordDict(records_file)
-#
-# 	q_list = genQuestions(dict_records)
-#
-# 	for q in q_list:
-# 		print(q)
-
-
-
-
 if __name__ == "__main__":
+	records_file = '../resources/records_Alessandro_Volta.txt'
+	#num_questions = int(sys.argv[2])
+	num_questions = int('20')
 
-	text_file = sys.argv[1]
-	num_questions = int(sys.argv[2])
-	out_file = '../resources/questions.txt'
-	# extra_json = '../resources/train-v1.1.json'
 
-	dict_records = extractDictRecords(text_file)
+
+
+	dict_records = readRecordDict(records_file)
+
 	q_list = genQuestions(dict_records)
+	#
+	# for q in q_list:
+	# 	print(q)
 
-	# extra_train = extract_json.extra_train_data(extra_json)
-	# generate_hmm.get_hmm(text_file, extra_train)
+
 	hmmfile = '../resources/my.hmm'
 
-	sort_list = rank.get_best_q_n(q_list, num_questions, text_file, hmmfile)
+	sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
 	for s in sort_list:
 		print(s)
-	#write_file(out_file, sort_list)
+
+
+

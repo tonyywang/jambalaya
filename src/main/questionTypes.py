@@ -6,6 +6,17 @@
 
 from enum import Enum
 
+class TAGList(Enum):
+	WHO_TAGS = ['PERSON', 'noun.person', 'noun.group']
+	# WHOSE_TAGS = ['PERSON', 'noun.person', 'noun.group']
+	WHERE_TAGS = ['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']
+	WHEN_TAGS = ['DATE', 'noun.time']
+	WHAT_TAGS = []
+	HOWMANY_TAGS = ['CARDINAL', 'noun.quantity']
+	HOWLONG_TAGS = []
+	HOWOLD_TAGS = []
+
+
 class WHType(Enum):
 	WHO = 'who'
 	WHOSE = 'whose'
@@ -15,11 +26,11 @@ class WHType(Enum):
 	WHEN = 'when'
 	WHICH = 'which'
 	WHY = 'why'
-	HOW = 'how'
 	HOWMANY = 'how many'
 	HOWOLD = 'how old'
 	HOWLONG = 'how long'
 	HOWOFTEN = 'how often'
+	HOW = 'how'
 #Binary type
 class BINType(Enum):
 	AM = 'am'

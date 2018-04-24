@@ -51,6 +51,11 @@ class Record:
 				missing_args.append(arg)
 		return missing_args
 
+	def isMissingArg2(self, keywords):
+		if self.arg2 != '' and len(keywords.intersection(keywords_generation(self.arg2))) == 0:
+			return self.arg2
+		return None
+
 	def print_record(self):
 		print(self.relation, '( ', self.arg1, ', ', self.arg2, ', ', self.arg3, ' )')
 
