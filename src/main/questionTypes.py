@@ -18,6 +18,10 @@ class TAGList(Enum):
 
 
 class WHType(Enum):
+	WHATTIME = 'what time'
+	WHATYEAR = 'what year'
+	WHATMONTH = 'what month'
+	WHATDAY = 'what day'
 	WHO = 'who'
 	WHOSE = 'whose'
 	WHOM = 'whom'

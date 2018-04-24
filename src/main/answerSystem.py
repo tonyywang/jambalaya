@@ -59,7 +59,7 @@ def dealArg(arg):
 						if synset.lexname() == 'noun.person':
 							print(token.text)
 							word_tag_list.add((token.text, 'noun.person'))
-						elif synset.lexname() == 'noun.person':
+						elif synset.lexname() == 'noun.group':
 							print(token.text)
 							word_tag_list.add((token.text, 'noun.group'))
 						elif synset.lexname() == 'noun.location':
@@ -100,23 +100,20 @@ def find_relevant_records(dict_records, keywords):
 
 def answerWH(question_type, ranked_records, keywords):
 	for record, score in ranked_records:
-		if question_type == WHType.WHAT:
-			ans = record.isMissingArg2(keywords)
-			if ans is not None:
-				return ans
-		else:
+		if question_type != WHType.WHAT:
 			cands = record.findMissingArg(keywords)
 			if len(cands) == 0:
 				return None
 			for arg in cands:
 				word_tag_list = dealArg(arg)
 				for word, tag in word_tag_list:
-					if (question_type == WHType.WHO or question_type == WHType.WHOSE or question_type == WHType.WHOM)\
+					when_list = [WHType.WHEN, WHType.WHATTIME, WHType.WHATYEAR, WHType.WHATMONTH, WHType.WHATDAY]
+					if (question_type == WHType.WHO or question_type == WHType.WHOSE or question_type == WHType.WHOM) \
 						and tag in TAGList.WHO_TAGS.value:
-							return word
+						return word
 					elif question_type == WHType.WHERE and tag in TAGList.WHERE_TAGS.value:
-							return word  # or return arg3?
-					elif question_type == WHType.WHEN and tag in TAGList.WHEN_TAGS.value:
+						return word  # or return arg3?
+					elif question_type in when_list and tag in TAGList.WHEN_TAGS.value:
 						return word
 					elif question_type == WHType.HOW:
 						return 'None.something'
@@ -127,6 +124,11 @@ def answerWH(question_type, ranked_records, keywords):
 
 					elif question_type == WHType.HOWMANY and tag in TAGList.HOWMANY_TAGS.value:
 						return word
+		else:
+			ans = record.isMissingArg2(keywords)
+			if ans is not None:
+				return ans
+
 	return None
 
 
@@ -169,15 +171,15 @@ def write_file(filename, sent_list):
 
 
 if __name__ == "__main__":
-	records_file = sys.argv[1]
-	question_file = sys.argv[2]
-	questions = read_data(question_file)
-
-
-
-	# records_file = '../resources/records_Alessandro_Volta.txt'
-	# question_file = '../resources/question_Alessandro_Volta.txt'
+	# records_file = sys.argv[1]
+	# question_file = sys.argv[2]
 	# questions = read_data(question_file)
+
+
+
+	records_file = '../resources/records_Alessandro_Volta.txt'
+	question_file = '../resources/question_Alessandro_Volta.txt'
+	questions = read_data(question_file)
 
 	# records_file = '../resources/records_cougar.txt'
 	# questions = ["How long is an adult cougar's paw print?"]
