@@ -332,39 +332,39 @@ def test():
 
 
 
-if __name__ == "__main__":
-	records_file = '../resources/records.txt'
-	#num_questions = int(sys.argv[2])
-	num_questions = int('20')
-
-
-
-
-	dict_records = readRecordDict(records_file)
-
-	q_list = genQuestions(dict_records)
-
-	for q in q_list:
-		print(q)
-
-
-
-#
 # if __name__ == "__main__":
+# 	records_file = '../resources/records.txt'
+# 	#num_questions = int(sys.argv[2])
+# 	num_questions = int('20')
 #
-# 	text_file = sys.argv[1]
-# 	num_questions = int(sys.argv[2])
-# 	out_file = '../resources/questions.txt'
-# 	extra_json = '../resources/train-v1.1.json'
 #
-# 	dict_records = extractDictRecords(text_file)
+#
+#
+# 	dict_records = readRecordDict(records_file)
+#
 # 	q_list = genQuestions(dict_records)
 #
-# 	extra_train = extract_json.extra_train_data(extra_json)
-# 	generate_hmm.get_hmm(text_file, extra_train)
-# 	hmmfile = '../resources/my.hmm'
-#
-# 	sort_list = rank.get_best_q_n(q_list, num_questions, text_file, hmmfile)
-# 	for s in sort_list:
-# 		print(s)
-# 	#write_file(out_file, sort_list)
+# 	for q in q_list:
+# 		print(q)
+
+
+
+
+if __name__ == "__main__":
+
+	text_file = sys.argv[1]
+	num_questions = int(sys.argv[2])
+	out_file = '../resources/questions.txt'
+	# extra_json = '../resources/train-v1.1.json'
+
+	dict_records = extractDictRecords(text_file)
+	q_list = genQuestions(dict_records)
+
+	# extra_train = extract_json.extra_train_data(extra_json)
+	# generate_hmm.get_hmm(text_file, extra_train)
+	hmmfile = '../resources/my.hmm'
+
+	sort_list = rank.get_best_q_n(q_list, num_questions, text_file, hmmfile)
+	for s in sort_list:
+		print(s)
+	#write_file(out_file, sort_list)
