@@ -9,13 +9,13 @@ import collections
 
 import sys
 import io
-import coreference
 from questionTypes import WHType
 from questionTypes import BINType
 from questionTypes import detect_type
 
 TOP_K = 10
 
+nlp = spacy.load('en')
 
 def read_data(file):
     with open(file) as f:
@@ -46,7 +46,6 @@ def keywords_generation(question):
 
 # topK Most Relevant Sentences
 def find_relevant_sentences(keywords, article):
-	nlp = spacy.load('en')
 	article_dict = collections.Counter()
 	for sentence in article:
 		tokens = set()
@@ -54,7 +53,7 @@ def find_relevant_sentences(keywords, article):
 		for token in doc:
 			tokens.add(str(token))
 		matched_words = set(filter(set(keywords).__contains__, tokens))
-		article_dict[sentence] = len(matched_words) / len(tokens)
+		article_dict[sentence] = len(matched_words)
 
 	relevant_sents = []
 	for (sentence, num_matchwords) in article_dict.most_common(TOP_K):
@@ -63,7 +62,6 @@ def find_relevant_sentences(keywords, article):
 	return relevant_sents
 
 def find_answer(keywords, article):
-	nlp = spacy.load('en')
 	article_dict = collections.Counter()
 	for sentence in article:
 		tokens = keywords_generation(sentence)
@@ -81,7 +79,6 @@ def find_answer(keywords, article):
 def extract_answer_by_NER(relevant_sents, ner_list):
 	answers = []
 	for sent in relevant_sents:
-		nlp = spacy.load('en')
 		doc = nlp(sent)
 		# answer = set()
 		for ent in doc.ents:
@@ -94,7 +91,6 @@ def extract_dobj(relevant_sents):
 	# He has finished his homework.
 	answers = []
 	for sent in relevant_sents:
-		nlp = spacy.load('en')
 		doc = nlp(sent)
 		for doc_sen in doc.sents:
 			for chunk in doc_sen.noun_chunks:

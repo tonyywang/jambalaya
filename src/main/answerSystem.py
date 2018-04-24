@@ -169,14 +169,15 @@ def write_file(filename, sent_list):
 
 
 if __name__ == "__main__":
-	# article = sys.argv[1]
-	# question_file = sys.argv[2]
-
-
-
-	records_file = '../resources/records_Alessandro_Volta.txt'
-	question_file = '../resources/question_Alessandro_Volta.txt'
+	records_file = sys.argv[1]
+	question_file = sys.argv[2]
 	questions = read_data(question_file)
+
+
+
+	# records_file = '../resources/records_Alessandro_Volta.txt'
+	# question_file = '../resources/question_Alessandro_Volta.txt'
+	# questions = read_data(question_file)
 
 	# records_file = '../resources/records_cougar.txt'
 	# questions = ["How long is an adult cougar's paw print?"]

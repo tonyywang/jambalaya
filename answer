@@ -3,5 +3,5 @@ Question=$2
 
 RecordFile=src/resources/records_${Article##*/}
 python3 src/main/graphene_extraction.py $Article > $RecordFile
-#python3 src/main/answerSystem.py $RecordFile $Question
+python3 src/main/answerSystem.py $RecordFile $Question
 
