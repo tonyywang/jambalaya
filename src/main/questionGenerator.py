@@ -343,11 +343,13 @@ def test():
 
 
 if __name__ == "__main__":
-	records_file = '../resources/records_Alessandro_Volta.txt'
-	#num_questions = int(sys.argv[2])
-	num_questions = int('20')
+	records_file = sys.argv[1]
+	num_questions = int(sys.argv[2])
+	hmmfile = sys.argv[3]
 
-
+	# records_file = '../resources/records_Alessandro_Volta.txt'
+	# num_questions = int('20')
+	# hmmfile = '../resources/my.hmm'
 
 
 	dict_records = readRecordDict(records_file)
@@ -358,7 +360,7 @@ if __name__ == "__main__":
 	# 	print(q)
 
 
-	hmmfile = '../resources/my.hmm'
+
 
 	sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
 	for s in sort_list:

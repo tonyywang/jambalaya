@@ -1,6 +1,9 @@
 Article=$1
 N=$2
-recordFile=src/resources/records.txt
+HMM=src/main/my.hmm
 
-#python3 src/main/simplify.py $1
-python3 src/main/question3.py $recordFile $N
+RecordFile=src/resources/records_${Article##*/}
+python3 src/main/graphene_extraction.py $Article > $RecordFile
+
+
+python3 src/main/questionGenerator.py $recordFile $N $HMM

@@ -10,8 +10,6 @@
 #curl -X POST -H "Content-Type: application/json"  -d '{"text": "Gemini is one of the constellations of the zodiac. It was one of the 48 constellations described by the 2nd century AD astronomer Ptolemy and it remains one of the 88 modern constellations today. Its name is Latin for twins, and it is associated with the twins Castor and Pollux in Greek mythology."}' -H "Accept: application/json" "http://localhost:8080/coreference/text"
 
 
-#conda install -c asmeurer pattern
-#from pattern.en import lemma
 from nltk.stem import PorterStemmer
 from rake_nltk import Rake
 # Generate keywords for quetion
@@ -64,16 +62,3 @@ class Record:
 		l = [self.relation, self.arg1, self.arg2, self.arg3]
 		return ' ### '.join(l)
 
-
-# def mytest():
-# 	rels = '{"coreferenced":true,"sentences":[{"originalSentence":"It is a toy .","sentenceIdx":0,"extractions":[{"id":"3c0573f5a7fe44648782fbd7c3632020","type":"VERB_BASED","confidence":{"present":false},"sentenceIdx":0,"contextLayer":0,"relation":"is","arg1":"it","arg2":"a toy","linkedContexts":[],"simpleContexts":[]}]}],"extractions":[{"id":"3c0573f5a7fe44648782fbd7c3632020","type":"VERB_BASED","confidence":{"present":false},"sentenceIdx":0,"contextLayer":0,"relation":"is","arg1":"it","arg2":"a toy","linkedContexts":[],"simpleContexts":[]}]}'
-# 	a = json.loads(rels)
-# 	records = a["extractions"]
-# 	for idx in range(0,len(records)):
-# 		record = records[idx]
-# 		r = record["relation"]
-# 		arg1 = record["arg1"]
-# 		arg2 = record["arg2"]
-# 		context = ''
-# 		Record(r, arg1, arg2, context).print_record()
-# mytest()
