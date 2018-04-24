@@ -15,6 +15,7 @@ from questionTypes import detect_type
 from relationRecord import Record
 from relationRecord import keywords_generation
 from graphene_extraction import readRecordDict
+from nltk.corpus import wordnet as wn
 
 TOP_K = 10
 
@@ -24,9 +25,9 @@ nlp = spacy.load('en')
 
 
 def read_data(file):
-    with open(file) as f:
-        data = f.readlines()
-    return data
+	with open(file) as f:
+		data = f.readlines()
+	return data
 
 
 # word, NER, att
@@ -37,42 +38,45 @@ def dealArg(arg):
 		return None
 
 	doc = nlp(arg)
-	word_tag_list = []
-
-	for token in doc:
-		lexicalTags = []
-	    if token.dep_ == 'dobj' and token.tag_ != 'NNP' and token.tag_ != '-PRON-':
-			for synset in wn.synsets(token):
-				lexicalTags.append(synset.lexname())
-			for tag in lexicalTags:
-				if synset.lexname == noun.location:
-					return WHType.WHERE
-				if synset.lexname == noun.time:
-					return WHType.WHEN
-				# if synset.lexname == noun.quantity:
-				# 	return WHType.HOWMUCH?
-				else:
-					sysnet.lexname == noun.location:
-					return WHTYPE.WHAT
-
-	    if token.dep_ == 'pobj' and token.tag_ != 'NNP' and token.tag_ != '-PRON-':
-	        print(wn.synset(token.lemma_ + '.n.01').lexname)
-	        # for synset in list(wn.all_synsets('n'))[:3]:
-	        #     print(token.text)
-	        #     print(synset)
+	word_tag_list = set()
 
 	# only one sent.
 	for sent in doc.sents:
 		root_loc = sent.root.i
-		root_token = doc[root_loc]
+		root_token = doc[root_loc] # not being used? -Tony
+
 		for ent in doc.ents:
-			word_tag_list.append((ent.text, ent.label_))
+			word_tag_list.add((ent.text, ent.label_))
+
+	for token in doc:
+		# lexicalTags = set()
+		if token.dep_ == 'nsubj' or token.dep_ == 'dobj' or token.dep_ == 'pobj':
+			if token.ent_type_ == "":
+				if token.tag_ != 'NNP' and token.tag_ != '-PRON-':
+					for synset in wn.synsets(token.text):
+						if synset.lexname() == 'noun.person':
+							print(token.text)
+							word_tag_list.add((token.text, 'noun.person'))
+						elif synset.lexname() == 'noun.person':
+							print(token.text)
+							word_tag_list.add((token.text, 'noun.group'))
+						elif synset.lexname() == 'noun.location':
+							print(token.text)
+							word_tag_list.add((token.text, 'noun.location'))
+						elif synset.lexname() == 'noun.time':
+							print(token.text)
+							word_tag_list.add((token.text, 'noun.time'))
+						elif synset.lexname() == 'noun.quantity':
+							print(token.text)
+							word_tag_list.add((token.text, 'noun.quantity'))
+
+		# word_tag_list.append([tagset for tagset in lexicalTags])
 
 	# for token in tokens, do word_tag_list.append((word, tag))
 
+	# print(word_tag_list)
+
 	return word_tag_list
-
-
 
 
 def find_relevant_records(dict_records, keywords):
@@ -101,7 +105,7 @@ def answerWH(question_type, ranked_records, keywords):
 				if question_type == WHType.WHO:
 					if tag in ['PERSON', 'noun.person']:
 						return word
-				elif question_type == WHType.WHOSE and tag in ['PERSON', 'noun.person']:
+				elif question_type == WHType.WHOSE and tag in ['PERSON', 'noun.person', 'noun.group']:
 					return word
 				elif question_type == WHType.WHERE and tag in \
 					['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']:
