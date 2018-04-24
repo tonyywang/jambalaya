@@ -1,3 +1,6 @@
+Article=$1
+N=$2
+recordFile=src/resources/records.txt
 
 #python3 src/main/simplify.py $1
-python3 src/main/question2.py src/resources/simplifiedSentences.txt $2
+python3 src/main/question3.py $recordFile $N
