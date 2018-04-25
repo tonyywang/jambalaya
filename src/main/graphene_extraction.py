@@ -7,6 +7,7 @@ import sys
 import time
 import io
 import unicodedata
+import re
 from collections import defaultdict
 from relationRecord import Record
 
@@ -25,20 +26,47 @@ def preprocessing(file):
 
     return data
 
+def remove_text_inside_brackets(text, brackets="()[]"):
+    count = [0] * (len(brackets) // 2) # count open/close brackets
+    saved_chars = []
+    for character in text:
+        for i, b in enumerate(brackets):
+            if character == b: # found bracket
+                kind, is_close = divmod(i, 2)
+                count[kind] += (-1)**is_close # `+1`: open, `-1`: close
+                if count[kind] < 0: # unbalanced bracket
+                    count[kind] = 0  # keep it
+                else:  # found bracket to remove
+                    break
+        else: # character is not a [balanced] bracket
+            if not any(count): # outside brackets
+                saved_chars.append(character)
+    saved = ''.join(saved_chars)
+
+    finalsaved = ""
+    if "  " in saved:
+        finalsaved = saved.replace("  ", " ")
+        print(finalsaved)
+
+    return finalsaved
 
 def concat(data):
     paragraphs_only = []
     for section in data:
-        if len(section) > 30:
-            paragraphs_only.append(section)
+        new_section = remove_text_inside_brackets(section)
+        if len(new_section) > 30:
+            # nobrackets = re.sub("[\(\[].*?[\)\]]", "", section)
+            paragraphs_only.append(new_section)
     return "\n".join(paragraphs_only)
     # return paragraphs_only
 
-def post(paragraphs_only):
+if __name__ == "__main__":
+    file = sys.argv[1]
+    data = preprocessing(file)
+    paragraphs_only = concat(data)
+    print(paragraphs_only)
 
-    # article = []
-    #
-    # for i in range(len(paragraphs_only)):
+def post(paragraphs_only):
 
     headers = {
         'Content-Type': 'application/json',
