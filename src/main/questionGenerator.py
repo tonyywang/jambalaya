@@ -19,13 +19,14 @@ from questionTypes import WHType
 from relationRecord import Record
 from questionTypes import TAGList
 from nltk.corpus import wordnet as wn
+from collections import defaultdict
 
 #from answer3 import dealArg
 
 from graphene_extraction import readRecordDict
 
 # python -m spacy download en_core_web_lg
-#nlp = spacy.load('en_core_web_lg')
+# nlp = spacy.load('en_core_web_lg')
 nlp = spacy.load('en')
 
 def findSub(sent):
@@ -126,24 +127,20 @@ def dealArg(arg):
 
 	# only one sent.
 	for sent in doc.sents:
-		root_loc = sent.root.i
-		root_token = doc[root_loc]
 		for ent in doc.ents:
-			remain = arg.strip(ent.text)
+			remain = arg.replace(ent.text, '')
+			# remain = arg.strip(ent.text)
 			word_tag_list.append((ent.text, ent.label_, remain))
 
-	# for token in tokens, do word_tag_list.append((word, tag))
-
 	for token in doc:
-		# lexicalTags = set()
-		if token.dep_ == 'nsubj' or token.dep_ == 'dobj' or token.dep_ == 'pobj':
-			if token.ent_type_ == '' and token.tag_ != 'NNP' and token.tag_ != '-PRON-':
-				for synset in wn.synsets(token.text):
-					remain = arg.strip(token.text)
-					word_tag_list.append((token.text, synset.lexname, remain))
+		if token.dep_ in TAGList.HOW_TAGS.value:
+			concat=[]
+			for s in token.subtree:
+				concat.append(s.text)
+			remain = arg.replace(' '.join(concat), '')
+			word_tag_list.append((token.text, token.dep_, remain))
 
 	return word_tag_list
-
 
 
 # # context, NER
@@ -171,70 +168,80 @@ def dealArg(arg):
 # had been watching  ( he, TV)    --> aux_verb = had, verb = been watching
 
 # where, when, how, how often, how long, whom, what
-def gen_wh_list3(q, arg):
+def gen_wh_list3(q, word_tag_list):
 	q_list = []
-	word_tag_list = dealArg(arg)  # He was in Woolsthorpe Manor. --arg2='', arg3 = 'in Woolsthorpe Manor'
 	for word, tag, att in word_tag_list:
 		if tag in TAGList.WHERE_TAGS.value:
 			q_list.append(WHType.WHERE.value + q)
-		elif tag in ['DATE']:
+		elif tag in TAGList.WHEN_TAGS.value:
 			q_list.append(WHType.WHEN.value + q)
-		elif tag in ['PERSON']:
+		elif tag in TAGList.WHO_TAGS.value:
 			q_list.append(WHType.WHOM.value + q)
-		else:
-			q_list.append(WHType.WHAT.value + q)
+		# else:
+			# q_list.append(WHType.WHAT.value + q)
 	return q_list
 
+
+def gen_how_list2(q_part, word_tag_list):
+	q_list = []
+	for word, tag, att in word_tag_list:
+		q = ' ' + att + ' ' + q_part
+		if tag in TAGList.HOWMANY_TAGS.value:
+			q_list.append(WHType.HOWMANY.value + q)
+		elif tag in TAGList.HOW_TAGS.value:
+			q_list.append(WHType.HOW.value + q)
+		elif tag in TAGList.HOWMUCH_TAGS.value:
+			q_list.append(WHType.HOWMUCH.value + q)
+		elif tag in TAGList.HOWLONG_TAGS.value:
+			q_list.append(WHType.HOWLONG.value + q)
+		elif tag in TAGList.HOWOLD_TAGS.value:
+			q_list.append(WHType.HOWOLD.value + q)
+		elif tag in TAGList.HOWOFTEN_TAGS.value:
+			q_list.append(WHType.HOWOFTEN.value + q)
+		# else:
+			# q_list.append(WHType.WHAT.value + q)
+	return q_list
 
 
 # He is a boy --> is    he    a boy?
 def genAuxQuestion(b_type, listRecords):
 	q_list = []
 	for record in listRecords:
-		q_list.append(b_type + ' ' + record.arg1 + '?')  # is he?
+		# q_list.append(b_type + ' ' + record.arg1 + '?')  # is he?
 		if record.arg2 != '':
 			q_list.append(b_type + ' ' + record.arg1 + ' ' + record.arg2 + '?')  # is he a boy?
 
 			word_tag_list = dealArg(record.arg2)
-			q = ' ' + b_type + ' ' + record.arg1 + '?'
-			for word, tag, att in word_tag_list:
-				if tag in ['quantity']:
-					q_list.append(WHType.HOWMANY.value + q)
-				else:
-					q_list.append(WHType.WHAT.value + q)
+			q_list.extend(gen_how_list2(' ' + b_type + ' ' + record.arg1 + '?', word_tag_list))
 
 		if record.arg3 != '':
+			word_tag_list = dealArg(record.arg3)  # He was in Woolsthorpe Manor. --arg2='', arg3 = 'in Woolsthorpe Manor'
 			q_list.append(b_type + ' ' + record.arg1 + ' ' + record.arg2 + ' ' + record.arg3 + '?')
-
-			wh_list = gen_wh_list3(' ' + b_type + ' ' + record.arg1 + '?', record.arg3)
+			wh_list = gen_wh_list3(' ' + b_type + ' ' + record.arg1 + '?', word_tag_list)
 			q_list.extend(wh_list)
 
 	return q_list
 
 def genRealVerbQuestion(relation, listRecords):
 	q_list = []
-	aux_verb, verb = dealVerbTense(relation)
-	if aux_verb is None or verb is None:
-		print(relation)
-		return q_list
-
 	for record in listRecords:
-		q_list.append(aux_verb + ' ' + record.arg1 + ' ' + verb + '?')
+
+		aux_verb, verb = dealVerbTense(record.getArg123())
+		if aux_verb is None or verb is None:
+			print(relation)
+			return q_list
+
+		# q_list.append(aux_verb + ' ' + record.arg1 + ' ' + verb + '?')
 		if record.arg2 != '':
 			q_list.append(aux_verb + ' ' + record.arg1 + ' ' + verb + ' ' + record.arg2 + '?')
 
 			word_tag_list = dealArg(record.arg2)
-			q = ' ' + aux_verb + ' ' + record.arg1 + ' ' + verb + '?'
-			for word, tag, att in word_tag_list:
-				if tag in ['quantity']:
-					q_list.append(WHType.HOWMANY.value + q)
-				else:
-					q_list.append(WHType.WHAT.value + q)
+			q_list.extend(gen_how_list2(' ' + aux_verb + ' ' + record.arg1 + ' ' + verb + '?', word_tag_list))
 
 		if record.arg3 != '':
 			q_list.append(aux_verb + ' ' + record.arg1 + ' ' + verb + ' ' + record.arg2 + ' ' + record.arg3 + '?')
-
-			wh_list = gen_wh_list3(' ' + aux_verb + ' ' + record.arg1 + ' ' + verb + '?', record.arg3)
+			word_tag_list = dealArg(record.arg3)  # He was in Woolsthorpe Manor. --arg2='', arg3 = 'in Woolsthorpe Manor'
+			wh_list = gen_wh_list3(' ' + aux_verb + ' ' + record.arg1 + ' ' + verb + '?', word_tag_list)
 			q_list.extend(wh_list)
 	return q_list
 
@@ -246,7 +253,7 @@ def askSub(listRecords):
 	wh_list = []
 	for record in listRecords:
 		q_list = []
-		q_list.append(record.relation + '?')
+		# q_list.append(record.relation + '?')
 		if record.arg2 != '':
 			q_list.append(record.relation + ' ' + record.arg2 + '?')
 		if record.arg3 != '':
@@ -255,20 +262,27 @@ def askSub(listRecords):
 			return None
 
 		word_tag_list = dealArg(record.arg1)
+		q_flag = False
+		# HOW,HOW...
+		for q in q_list:
+			wh = gen_how_list2(q, word_tag_list)
+			if len(wh) != 0:
+				wh_list.extend(wh)
+				q_flag = True
+
+		# WHO
 		for word, tag, att in word_tag_list:
-			if tag in ['PERSON']:
+			if tag in TAGList.WHO_TAGS.value:
+				q_flag = True
 				for q in q_list:
 					if att == '':
 						wh_list.append(WHType.WHO.value + ' ' + q)
 					else:
 						wh_list.append(WHType.WHOSE.value + ' ' + att + ' ' + q)
-			elif tag in ['CARDINAL']:
-				if att != '':
-					for q in q_list:
-						wh_list.append(WHType.HOWMANY.value + ' ' + att + ' ' + q)
-			else:#what
-				for q in q_list:
-					wh_list.append(WHType.WHAT.value + ' ' + q)
+
+		# WHAT
+		if q_flag == False:
+			wh_list.append(WHType.WHAT.value + ' ' + q)
 
 	return wh_list
 
@@ -343,28 +357,31 @@ def test():
 
 
 if __name__ == "__main__":
-	records_file = sys.argv[1]
-	num_questions = int(sys.argv[2])
-	hmmfile = sys.argv[3]
+	# records_file = sys.argv[1]
+	# num_questions = int(sys.argv[2])
+	# hmmfile = sys.argv[3]
 
-	# records_file = '../resources/records_Alessandro_Volta.txt'
-	# num_questions = int('20')
-	# hmmfile = '../resources/my.hmm'
+	records_file = '../resources/records_Alessandro_Volta.txt'
+	num_questions = int('20')
+	hmmfile = '../resources/my.hmm'
+
 
 
 	dict_records = readRecordDict(records_file)
 
+	# dict_records = {'like':[Record('like', 'I', 'my new apartment a lot', ''), Record('like', 'I', 'my new apartment deeply', '')]}
+
 	q_list = genQuestions(dict_records)
+
+	for q in q_list:
+		print(q)
+
+
+
 	#
-	# for q in q_list:
-	# 	print(q)
-
-
-
-
-	sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
-	for s in sort_list:
-		print(s)
+	# sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
+	# for s in sort_list:
+	# 	print(s)
 
 
 

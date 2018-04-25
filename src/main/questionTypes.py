@@ -10,11 +10,17 @@ class TAGList(Enum):
 	WHO_TAGS = ['PERSON', 'noun.person', 'noun.group']
 	# WHOSE_TAGS = ['PERSON', 'noun.person', 'noun.group']
 	WHERE_TAGS = ['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']
-	WHEN_TAGS = ['DATE', 'noun.time']
-	WHAT_TAGS = []
+	WHEN_TAGS = ['DATE', 'TIME', 'noun.time']
+	WHAT_TAGS = ['noun.act', 'noun.animal', 'noun.artifact', 'noun.attribute', 'noun.body', 'noun.cognition',
+				 'noun.communication', 'noun.event', 'noun.feeling', 'noun.food', 'noun.motive', 'noun.object',
+				 'noun.other', 'noun.phenomenon', 'noun.plant', 'noun.possession', 'noun.process',
+				 'noun.relation', 'noun.shape', 'noun.state', 'noun.substance']
 	HOWMANY_TAGS = ['CARDINAL', 'noun.quantity']
-	HOWLONG_TAGS = []
-	HOWOLD_TAGS = []
+	HOWMUCH_TAGS = ['PERCENT', 'MONEY', 'QUANTITY']
+	HOWLONG_TAGS = ['DATE', 'TIME']
+	HOWOLD_TAGS = ['DATE']
+	HOW_TAGS = ['npadvmod', 'advmod']
+	HOWOFTEN_TAGS = []
 
 
 class WHType(Enum):
@@ -34,6 +40,7 @@ class WHType(Enum):
 	HOWOLD = 'how old'
 	HOWLONG = 'how long'
 	HOWOFTEN = 'how often'
+	HOWMUCH = 'how much'
 	HOW = 'how'
 #Binary type
 class BINType(Enum):

@@ -115,14 +115,17 @@ def answerWH(question_type, ranked_records, keywords):
 						return word  # or return arg3?
 					elif question_type in when_list and tag in TAGList.WHEN_TAGS.value:
 						return word
-					elif question_type == WHType.HOW:
-						return 'None.something'
-					elif question_type == WHType.HOWLONG:
-						return 'sss'
-					elif question_type == WHType.HOWOFTEN:
-						return 'None.something'
-
+					elif question_type == WHType.HOW and tag in TAGList.HOW_TAGS.value:
+						return word
+					elif question_type == WHType.HOWLONG and tag in TAGList.HOWLONG_TAGS.value:
+						return word
+					elif question_type == WHType.HOWOFTEN and tag in TAGList.HOWOFTEN_TAGS.value:
+						return word
 					elif question_type == WHType.HOWMANY and tag in TAGList.HOWMANY_TAGS.value:
+						return word
+					elif question_type == WHType.HOWMUCH and tag in TAGList.HOWMUCH_TAGS.value:
+						return word
+					elif question_type == WHType.HOWOLD and tag in TAGList.HOWOLD_TAGS.value:
 						return word
 		else:
 			ans = record.isMissingArg2(keywords)
