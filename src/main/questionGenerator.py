@@ -369,33 +369,25 @@ def test():
 
 
 if __name__ == "__main__":
-	# records_file = sys.argv[1]
-	# num_questions = int(sys.argv[2])
-	# hmmfile = sys.argv[3]
+	records_file = sys.argv[1]
+	num_questions = int(sys.argv[2])
+	hmmfile = sys.argv[3]
 
-	records_file = '../resources/records_Alessandro_Volta.txt'
-	num_questions = int('50')
-	hmmfile = '../resources/my.hmm'
+	# records_file = '../resources/records_Alessandro_Volta.txt'
+	# num_questions = int('50')
 	# hmmfile = '../resources/mytony.hmm'
 
-
-
 	dict_records = readRecordDict(records_file)
-
-	# dict_records = {'like':[Record('like', 'I', 'my new apartment a lot', ''), Record('like', 'I', 'my new apartment deeply', '')]}
 	# dict_records = {'like': [Record('inspired', "John W's ideas", 'Tom', '')]}
 
 	q_list = genQuestions(dict_records)
 
-	for q in q_list:
-		print(q)
+	# for q in q_list:
+	# 	print(q)
 
-
-
-
-	# sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
-	# for s in sort_list:
-	# 	print(s)
+	sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
+	for s in sort_list:
+		print(s)
 
 
 

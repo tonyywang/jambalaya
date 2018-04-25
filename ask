@@ -1,6 +1,6 @@
 Article=$1
 N=$2
-HMM=src/main/my.hmm
+HMM=src/main/mytony.hmm
 
 RecordFile=src/resources/records_${Article##*/}
 python3 src/main/graphene_extraction.py $Article > $RecordFile

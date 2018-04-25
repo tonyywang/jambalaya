@@ -174,18 +174,13 @@ def write_file(filename, sent_list):
 
 
 if __name__ == "__main__":
-	# records_file = sys.argv[1]
-	# question_file = sys.argv[2]
-	# questions = read_data(question_file)
-
-
-
-	records_file = '../resources/records_Alessandro_Volta.txt'
-	question_file = '../resources/question_Alessandro_Volta.txt'
+	records_file = sys.argv[1]
+	question_file = sys.argv[2]
 	questions = read_data(question_file)
 
-	# records_file = '../resources/records_cougar.txt'
-	# questions = ["How long is an adult cougar's paw print?"]
+	# records_file = '../resources/records_Alessandro_Volta.txt'
+	# question_file = '../resources/question_Cougar.txt'
+	# questions = read_data(question_file)
 
 	# questions = ["What did Alessandro Volta invent in 1800?"]
 	# questions = ['What did Alessandro Volta invent in 1800?',
@@ -199,9 +194,10 @@ if __name__ == "__main__":
 
 	answer_list = []
 	for q in questions:
-		print(q)
+		# print(q)
 		answer = answer_question(dict_records, q)
 		if answer is None:
 			answer = 'Woops, no answer.'
-		print(answer + '\n\n')
+		# print(answer + '\n\n')
+		print(answer)
 
