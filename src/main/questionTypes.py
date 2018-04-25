@@ -8,7 +8,7 @@ from enum import Enum
 
 class TAGList(Enum):
 	WHO_TAGS = ['PERSON', 'noun.person', 'noun.group']
-	# WHOSE_TAGS = ['PERSON', 'noun.person', 'noun.group']
+	# WHOSE_TAGS = ['poss']
 	WHERE_TAGS = ['LOC', 'FACILITY', 'ORG', 'GPE', 'noun.location']
 	WHEN_TAGS = ['DATE', 'TIME', 'noun.time']
 	WHAT_TAGS = ['noun.act', 'noun.animal', 'noun.artifact', 'noun.attribute', 'noun.body', 'noun.cognition',

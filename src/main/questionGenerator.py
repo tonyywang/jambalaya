@@ -125,12 +125,11 @@ def dealArg(arg):
 	doc = nlp(arg)
 	word_tag_list = []
 
-	# only one sent.
-	for sent in doc.sents:
-		for ent in doc.ents:
-			remain = arg.replace(ent.text, '')
-			# remain = arg.strip(ent.text)
-			word_tag_list.append((ent.text, ent.label_, remain))
+
+	for ent in doc.ents:
+		remain = arg.replace(ent.text, '')
+		# remain = arg.strip(ent.text)
+		word_tag_list.append((ent.text, ent.label_, remain))
 
 	for token in doc:
 		if token.dep_ in TAGList.HOW_TAGS.value:
@@ -142,6 +141,15 @@ def dealArg(arg):
 
 	return word_tag_list
 
+
+def dealWhose(arg):
+	doc = nlp(arg)
+	# only one sent.
+	for chunk in doc.noun_chunks:
+		for word in chunk.subtree:
+			if word.dep_ == 'poss':
+				return chunk.root.text
+	return None
 
 # # context, NER
 # # Tom,  PERSON
@@ -270,15 +278,19 @@ def askSub(listRecords):
 				wh_list.extend(wh)
 				q_flag = True
 
-		# WHO
-		for word, tag, att in word_tag_list:
-			if tag in TAGList.WHO_TAGS.value:
-				q_flag = True
-				for q in q_list:
-					if att == '':
+		# WHOSE
+		whose_att = dealWhose(record.arg1)
+		if whose_att is not None:
+			q_flag = True
+			for q in q_list:
+				wh_list.append(WHType.WHOSE.value + ' ' + whose_att + ' ' + q)
+		else:
+			# WHO
+			for word, tag, att in word_tag_list:
+				if tag in TAGList.WHO_TAGS.value:
+					q_flag = True
+					for q in q_list:
 						wh_list.append(WHType.WHO.value + ' ' + q)
-					else:
-						wh_list.append(WHType.WHOSE.value + ' ' + att + ' ' + q)
 
 		# WHAT
 		if q_flag == False:
@@ -362,14 +374,16 @@ if __name__ == "__main__":
 	# hmmfile = sys.argv[3]
 
 	records_file = '../resources/records_Alessandro_Volta.txt'
-	num_questions = int('20')
+	num_questions = int('50')
 	hmmfile = '../resources/my.hmm'
+	# hmmfile = '../resources/mytony.hmm'
 
 
 
 	dict_records = readRecordDict(records_file)
 
 	# dict_records = {'like':[Record('like', 'I', 'my new apartment a lot', ''), Record('like', 'I', 'my new apartment deeply', '')]}
+	# dict_records = {'like': [Record('inspired', "John W's ideas", 'Tom', '')]}
 
 	q_list = genQuestions(dict_records)
 
@@ -378,7 +392,7 @@ if __name__ == "__main__":
 
 
 
-	#
+
 	# sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
 	# for s in sort_list:
 	# 	print(s)
