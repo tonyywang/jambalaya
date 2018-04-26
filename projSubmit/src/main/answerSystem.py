@@ -3,7 +3,6 @@
 # Decide the named entity type(person, place) of the answer
 from __future__ import division
 
-from rake_nltk import Rake
 import spacy
 import collections
 
@@ -179,7 +178,7 @@ if __name__ == "__main__":
 	questions = read_data(question_file)
 
 	# records_file = '../resources/records_Alessandro_Volta.txt'
-	# question_file = '../resources/question_Cougar.txt'
+	# question_file = '../resources/question_Alessandro_Volta.txt'
 	# questions = read_data(question_file)
 
 	# questions = ["What did Alessandro Volta invent in 1800?"]

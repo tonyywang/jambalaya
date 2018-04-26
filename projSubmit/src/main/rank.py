@@ -16,7 +16,7 @@ def sort_by_score(questions_list, num_questions, hmmfile):
 			list.append(q)
 	# ques_list = pcfg.test_score(list, train)
 	ques_list = hmm_prob.hmm_probility(hmmfile, list)
-	sentences = sorted(ques_list, key = lambda  x : q_score(x)-0.2* ques_list[x])
+	sentences = sorted(ques_list, key = lambda  x : q_score(x)-0.5* ques_list[x])
 	if len(sentences) > num_questions:
 		return sentences[0 : num_questions]
 	else:
