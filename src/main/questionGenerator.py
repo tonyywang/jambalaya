@@ -11,8 +11,6 @@ import spacy
 import sys
 import io
 import rank
-import extract_json
-import generate_hmm
 
 from questionTypes import BINType
 from questionTypes import WHType
@@ -375,7 +373,7 @@ if __name__ == "__main__":
 
 	# records_file = '../resources/records_Alessandro_Volta.txt'
 	# num_questions = int('50')
-	# hmmfile = '../resources/mytony.hmm'
+	# hmmfile = 'mytony.hmm'
 
 	dict_records = readRecordDict(records_file)
 	# dict_records = {'like': [Record('inspired', "John W's ideas", 'Tom', '')]}
