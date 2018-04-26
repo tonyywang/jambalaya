@@ -46,7 +46,6 @@ def remove_text_inside_brackets(text, brackets="()[]"):
     finalsaved = ""
     if "  " in saved:
         finalsaved = saved.replace("  ", " ")
-        print(finalsaved)
 
     return finalsaved
 

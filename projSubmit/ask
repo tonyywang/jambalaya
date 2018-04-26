@@ -1,9 +1,9 @@
 Article=$1
-N=$2
+NUM=$2
 HMM=src/main/mytony.hmm
 
 RecordFile=src/resources/records_${Article##*/}
 python3 src/main/graphene_extraction.py $Article > $RecordFile
 
 
-python3 src/main/questionGenerator.py $recordFile $N $HMM
+python3 src/main/questionGenerator.py $RecordFile $NUM $HMM

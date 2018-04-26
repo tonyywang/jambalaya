@@ -385,7 +385,7 @@ if __name__ == "__main__":
 
 	sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
 	for s in sort_list:
-		print(s)
+		print(s[0].upper() + s[1:])
 
 
 

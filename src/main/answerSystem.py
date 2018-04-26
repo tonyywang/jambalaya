@@ -198,5 +198,5 @@ if __name__ == "__main__":
 		if answer is None:
 			answer = 'Woops, no answer.'
 		# print(answer + '\n\n')
-		print(answer)
+		print(answer[0].upper() + answer[1:])
 

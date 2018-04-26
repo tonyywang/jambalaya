@@ -9,9 +9,10 @@
 
 #curl -X POST -H "Content-Type: application/json"  -d '{"text": "Gemini is one of the constellations of the zodiac. It was one of the 48 constellations described by the 2nd century AD astronomer Ptolemy and it remains one of the 88 modern constellations today. Its name is Latin for twins, and it is associated with the twins Castor and Pollux in Greek mythology."}' -H "Accept: application/json" "http://localhost:8080/coreference/text"
 
-
 from nltk.stem import PorterStemmer
 from rake_nltk import Rake
+import string
+
 # Generate keywords for quetion
 def keywords_generation(question):
 	ps = PorterStemmer()
@@ -30,7 +31,10 @@ class Record:
 		self.relation = r.strip()
 		self.arg1 = a1.strip()
 		self.arg2 = a2.strip()
-		self.arg3 = a3[:-1].strip()
+		self.arg3 = a3.strip()
+		if len(self.arg3) != 0 and self.arg3[-1] in string.punctuation:
+			self.arg3 = a3[:-1]
+
 
 	def getArg123(self):
 		return self.arg1 + ' ' + self.relation + ' ' + self.arg2 + ' '  + self.arg3 + '.'
