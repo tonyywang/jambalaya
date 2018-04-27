@@ -56,19 +56,14 @@ def dealArg(arg):
 					for synset in wn.synsets(token.text):
 						# word_tag_list.add((token.text, synset.lexname))
 						if synset.lexname() == 'noun.person':
-							print(token.text)
 							word_tag_list.add((token.text, 'noun.person'))
 						elif synset.lexname() == 'noun.group':
-							print(token.text)
 							word_tag_list.add((token.text, 'noun.group'))
 						elif synset.lexname() == 'noun.location':
-							print(token.text)
 							word_tag_list.add((token.text, 'noun.location'))
 						elif synset.lexname() == 'noun.time':
-							print(token.text)
 							word_tag_list.add((token.text, 'noun.time'))
 						elif synset.lexname() == 'noun.quantity':
-							print(token.text)
 							word_tag_list.add((token.text, 'noun.quantity'))
 
 		# word_tag_list.append([tagset for tagset in lexicalTags])
@@ -100,9 +95,16 @@ def find_relevant_records(dict_records, keywords):
 def answerWH(question_type, ranked_records, keywords):
 	for record, score in ranked_records:
 		if question_type != WHType.WHAT:
+			if question_type == WHType.HOWLONG:
+				# answer_relation = record.findMissingRelation(keywords)
+				word_tag_list = dealArg(record.relation)
+				for word, tag in word_tag_list:
+					if tag in TAGList.HOWLONG_TAGS.value:
+						return word
+
 			cands = record.findMissingArg(keywords)
 			if len(cands) == 0:
-				return None
+				continue
 			for arg in cands:
 				word_tag_list = dealArg(arg)
 				for word, tag in word_tag_list:
@@ -194,7 +196,10 @@ if __name__ == "__main__":
 	# questions = read_data(question_file)
 
 	# records_file = '../resources/records_Cougar.txt'
+	# question_file = '../resources/question_Cougar.txt'
+	# questions = read_data(question_file)
 	# questions = ["How long are cougar adult males (from nose to tail)?"]
+	# questions = ["What are some of the cougar's primary food sources?", "What are some of the cougar's primary food sources?"]
 	# questions = ['What did Alessandro Volta invent in 1800?',
 	# 			 'When did Volta retire?',
 	# 			'Who did Alessandro Volta marry?',
@@ -206,7 +211,7 @@ if __name__ == "__main__":
 
 	answer_list = []
 	for q in questions:
-		# print(q)
+		print(q)
 		answer = answer_question(dict_records, q)
 		if answer is None:
 			answer = 'No answer in this article.'

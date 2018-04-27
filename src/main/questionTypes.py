@@ -15,9 +15,9 @@ class TAGList(Enum):
 				 'noun.communication', 'noun.event', 'noun.feeling', 'noun.food', 'noun.motive', 'noun.object',
 				 'noun.other', 'noun.phenomenon', 'noun.plant', 'noun.possession', 'noun.process',
 				 'noun.relation', 'noun.shape', 'noun.state', 'noun.substance']
-	HOWMANY_TAGS = ['CARDINAL', 'noun.quantity']
+	HOWMANY_TAGS = ['CARDINAL', 'noun.quantity', 'QUANTITY']
 	HOWMUCH_TAGS = ['PERCENT', 'MONEY', 'QUANTITY']
-	HOWLONG_TAGS = ['DATE', 'TIME']
+	HOWLONG_TAGS = ['DATE', 'TIME', 'QUANTITY']
 	HOWOLD_TAGS = ['DATE']
 	HOW_TAGS = ['npadvmod', 'advmod']
 	HOWOFTEN_TAGS = []
