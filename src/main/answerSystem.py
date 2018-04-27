@@ -147,7 +147,14 @@ def answer_question(dict_records, question):
 
 	question_type = detect_type(question)
 	if isinstance(question_type, WHType):
-		return answerWH(question_type, ranked_records, keywords)
+		answer_wh = answerWH(question_type, ranked_records, keywords)
+		if answer_wh is not None:
+			return answer_wh
+		elif len(ranked_records) != 0:
+			# return best relevant sentence
+			answer_record, score = ranked_records[0]
+			return answer_record.getArg123()
+
 	elif isinstance(question_type, BINType):
 		if len(ranked_records) != 0:
 			answer_record, score = ranked_records[0]
@@ -157,7 +164,12 @@ def answer_question(dict_records, question):
 				return 'No.'
 		else:
 			return 'No.'
-		#return answerBIN(question_type, ranked_records)
+
+	# return best relevant sentence
+	if len(ranked_records) != 0:
+		answer_record, score = ranked_records[0]
+		return answer_record.getArg123()
+
 	return None
 
 
@@ -181,7 +193,8 @@ if __name__ == "__main__":
 	# question_file = '../resources/question_Alessandro_Volta.txt'
 	# questions = read_data(question_file)
 
-	# questions = ["What did Alessandro Volta invent in 1800?"]
+	# records_file = '../resources/records_Cougar.txt'
+	# questions = ["How long are cougar adult males (from nose to tail)?"]
 	# questions = ['What did Alessandro Volta invent in 1800?',
 	# 			 'When did Volta retire?',
 	# 			'Who did Alessandro Volta marry?',
@@ -196,7 +209,7 @@ if __name__ == "__main__":
 		# print(q)
 		answer = answer_question(dict_records, q)
 		if answer is None:
-			answer = 'Woops, no answer.'
+			answer = 'No answer in this article.'
 		# print(answer + '\n\n')
 		print(answer[0].upper() + answer[1:])
 
