@@ -211,7 +211,7 @@ if __name__ == "__main__":
 
 	answer_list = []
 	for q in questions:
-		print(q)
+		# print(q)
 		answer = answer_question(dict_records, q)
 		if answer is None:
 			answer = 'No answer in this article.'
