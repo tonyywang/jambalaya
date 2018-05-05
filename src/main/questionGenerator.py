@@ -378,14 +378,15 @@ if __name__ == "__main__":
 	dict_records = readRecordDict(records_file)
 	# dict_records = {'like': [Record('inspired', "John W's ideas", 'Tom', '')]}
 
-	q_list = genQuestions(dict_records)
+	if dict_records is not None:
+		q_list = genQuestions(dict_records)
 
-	# for q in q_list:
-	# 	print(q)
+		# for q in q_list:
+		# 	print(q)
 
-	sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
-	for s in sort_list:
-		print(s[0].upper() + s[1:])
+		sort_list = rank.get_best_q_n(q_list, num_questions, hmmfile)
+		for s in sort_list:
+			print(s[0].upper() + s[1:])
 
 
 

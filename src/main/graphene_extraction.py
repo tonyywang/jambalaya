@@ -13,7 +13,7 @@ from relationRecord import Record
 
 ### Graphene
 def preprocessing(file):
-    with io.open(file, 'r') as a:
+    with io.open(file, 'r', encoding='utf-8') as a:
         # list = []
         # for line in a:
         #     list.append(line)
@@ -56,94 +56,77 @@ def concat(data):
         if len(new_section) > 30:
             # nobrackets = re.sub("[\(\[].*?[\)\]]", "", section)
             paragraphs_only.append(new_section)
+    if len(paragraphs_only) == 0:
+        return None
     return "\n".join(paragraphs_only)
     # return paragraphs_only
 
-if __name__ == "__main__":
-    file = sys.argv[1]
-    data = preprocessing(file)
-    paragraphs_only = concat(data)
-    print(paragraphs_only)
-
 def post(paragraphs_only):
+    if paragraphs_only is None:
+        return None
+    try:
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    }
+        r = requests.post('http://localhost:8080/relationExtraction/text', headers=headers, json={'text':paragraphs_only, 'doCoreference': 'true', 'isolateSentences': 'false'})
+        # print(r.json())
+        time.sleep(0.5)
+        article = r.json()
+        # article.append(paragraph)
 
-    r = requests.post('http://localhost:8080/relationExtraction/text', headers=headers, json={'text':paragraphs_only, 'doCoreference': 'true', 'isolateSentences': 'false'})
-    # print(r.json())
-    time.sleep(0.5)
-    article = r.json()
-    # article.append(paragraph)
-
-    # return "\n".join(paragraphs_only)
-    return article
+        # return "\n".join(paragraphs_only)
+        return article
+    except:
+        return None
 
 
-def graphene(file):
-    data = preprocessing(file)
-    paragraphs_only = concat(data)
-    article = post(paragraphs_only)
-    return article
-
-#     with io.open(output, 'w+', encoding='utf-8') as wf:
-#         wf.write(article)
-#
-# def read(file):
-#     # loadedText = json.load(file)
-#
-#     with open(file, 'r') as a:
-#         text = a.read()
-#
-#     loadedText = json.loads(text)
-#
-#     return loadedText
-
-### Process files into relation dictionary of simplified sentences.
-### Output: {rel1: [sentence1, sentence2, ...], rel2: [sentence1, sentence2, ...], ...}
+# def graphene(file):
+#     data = preprocessing(file)
+#     paragraphs_only = concat(data)
+#     article = post(paragraphs_only)
+#     return article
 
 def extraction(text):
+    if text is None:
+        return ''
+    try:
+        extractions = text['extractions']
 
-    extractions = text['extractions']
+        allRecords = defaultdict(list)
 
-    allRecords = defaultdict(list)
+        for i in range(0, len(extractions)):
+            extraction = extractions[i]
+            rel = extraction['relation']
+            arg1 = extraction['arg1']
+            arg2 = extraction['arg2']
+            if not extraction['simpleContexts']:
+                simpleContexts = ''
+            else:
+                simpleContexts = extraction['simpleContexts'][0]['text']
 
-    for i in range(0, len(extractions)):
-        extraction = extractions[i]
-        rel = extraction['relation']
-        arg1 = extraction['arg1']
-        arg2 = extraction['arg2']
-        if not extraction['simpleContexts']:
-            simpleContexts = ''
-        else:
-            simpleContexts = extraction['simpleContexts'][0]['text']
+            record = Record(rel, arg1, arg2, simpleContexts)
+            allRecords[rel].append(str(record))
 
-        record = Record(rel, arg1, arg2, simpleContexts)
-        allRecords[rel].append(str(record))
-
-    return allRecords
+        return allRecords
+    except:
+        return None
 
 
 def readRecordDict(file):
     s = open(file, 'r', encoding='utf-8').read()
-    my_dict = eval(s)
+    try:
+        my_dict = eval(s)
 
-    allRecords = defaultdict(list)
-    for rel, l in my_dict.items():
-        for item in l:
-            rel, arg1, arg2, arg3 = item.split(' ### ')
-            allRecords[rel].append(Record(rel, arg1, arg2, arg3))
-    return allRecords
-
-
-def extractDictRecords(file):
-    data = preprocessing(file)
-    paragraphs_only = concat(data)
-    article = post(paragraphs_only)
-    allRecords = extraction(article)
-    return allRecords
+        allRecords = defaultdict(list)
+        for rel, l in my_dict.items():
+            for item in l:
+                rel, arg1, arg2, arg3 = item.split(' ### ')
+                allRecords[rel].append(Record(rel, arg1, arg2, arg3))
+        return allRecords
+    except:
+        return None
 
 if __name__ == "__main__":
     file = sys.argv[1]

@@ -208,13 +208,12 @@ if __name__ == "__main__":
 	# 			 'Where was Volta born?']
 
 	dict_records = readRecordDict(records_file)
-
-	answer_list = []
-	for q in questions:
-		# print(q)
-		answer = answer_question(dict_records, q)
-		if answer is None:
-			answer = 'No answer in this article.'
-		# print(answer + '\n\n')
-		print(answer[0].upper() + answer[1:])
+	if dict_records is not None:
+		answer_list = []
+		for q in questions:
+			answer = answer_question(dict_records, q)
+			if answer is None:
+				answer = 'No answer in this article.'
+			# print(answer + '\n\n')
+			print(answer[0].upper() + answer[1:])
 
