@@ -5,6 +5,7 @@ Built by Jing Wang, Tony Wang, and Wei Wang
 
 Final code is in the /projSubmit/ folder complete with readme for downloading and starting Jambalaya.
 
+------------
 
 Features a full NLP pipeline using the following open-source tools:
 
