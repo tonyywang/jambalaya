@@ -1,5 +1,6 @@
 # Jambalaya: The Wikipedia Question Answering & Generation System
 Final project for Carnegie Mellon's 11-611 Natural Language Processing course
+
 Built by Jing Wang, Tony Wang, and Wei Wang
 
 Final code is in the /projSubmit/ folder complete with readme for downloading and starting Jambalaya.
